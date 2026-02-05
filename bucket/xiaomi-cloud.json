@@ -1,0 +1,45 @@
+{
+    "version": "3.0.2",
+    "description": "Xiaomi Cloud desktop client for Windows - sync photos, notes, contacts and drive files across devices.",
+    "homepage": "https://i.mi.com/",
+    "license": "Proprietary",
+    "##": [
+        "Windows 64-bit build only; the vendor also publishes an ia32 installer and a macOS dmg.",
+        "The NSIS installer embeds the real app as $PLUGINSDIR\\app-64.7z; installer.script expands it and removes installer leftovers. It cannot be post_install: Scoop creates shims and shortcuts before that hook runs, and the main exe still lives inside app-64.7z.",
+        "The vendor uninstaller sits in $R0\\Uninstall 小米云服务.exe, so installer.script removes $R0 along with $PLUGINSDIR and $TEMP. The driveSync\\ folder belongs to the GUI installer and is left in place.",
+        "3.0.2 moved to the archive/download/full-release/... channel. The old archive/update-server/public/... channel stops at 2.5.4, and the static mi-lab.htm page still advertises 1.2.5; using that page for checkver would trigger a downgrade PR.",
+        "checkver reads the winx64 URL from /api/v1/releases and captures both the version and the full download URL; autoupdate.url reuses $matchWinurl so a CDN hostname or path change is followed automatically.",
+        "autoupdate.hash uses download mode: the vendor publishes no SHA-256, so Excavator downloads the installer and computes it."
+    ],
+    "url": "https://fds-cnbj1-mcfe-cdn.micloud.xiaomi.net/archive/download/full-release/win32/x64/XiaomiCloud-3.0.2.exe#/dl.7z",
+    "hash": "edf5b42eae434297d4392f0a0aebe4787b8f3d51a10785d8fe9bdb74fc4123a9",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\", \"$dir\\`$TEMP\" -Recurse -Force -ErrorAction SilentlyContinue"
+        ]
+    },
+    "bin": [
+        [
+            "小米云服务.exe",
+            "xiaomi-cloud"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "小米云服务.exe",
+            "小米云服务"
+        ]
+    ],
+    "checkver": {
+        "url": "https://update-server.micloud.xiaomi.net/api/v1/releases",
+        "jsonpath": "$.data.winx64",
+        "regex": "(?<winurl>https://[^\\s]+XiaomiCloud-(?<version>[\\d.]+)\\.exe)"
+    },
+    "autoupdate": {
+        "url": "$matchWinurl#/dl.7z",
+        "hash": {
+            "mode": "download"
+        }
+    }
+}
