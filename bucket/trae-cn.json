@@ -1,0 +1,41 @@
+{
+    "##": [
+        "China edition of Trae. It is a separate product from the trae.ai build (own data folder \".trae-cn\", trae-cn:// protocol, trae-cn mutex), so both editions can be installed side by side.",
+        "Only /icube/api/v1/native/version/trae/cn/latest publishes this build; /trae/latest still serves a stale international package (Trae-Setup-x64.exe), which is a different app.",
+        "The API exposes the build id used in the URL path (2.3.102387), while the product version reported by the app is 3.4.18. The build id is the manifest version, matching the upstream trae manifest.",
+        "The 467 MiB Inno Setup installer is unpacked with innounp; the payload lives in the {code_GetDestDir} folder, so extract_dir selects it and the {app}\\tools installer helpers are dropped.",
+        "The vendor publishes no checksums, so autoupdate.hash is omitted and Excavator downloads the installer to refresh the hash."
+    ],
+    "version": "2.3.103559",
+    "description": "AI-powered IDE from ByteDance, China edition",
+    "homepage": "https://www.trae.cn/",
+    "license": "Proprietary",
+    "notes": [
+        "Settings and extensions live outside the install directory (product.json sets dataFolderName to \".trae-cn\"), so nothing is persisted by Scoop.",
+        "The GUI executable is \"Trae CN.exe\"; the CLI wrapper is exposed as 'trae-cn'."
+    ],
+    "url": "https://lf-cdn.trae.com.cn/obj/trae-com-cn/pkg/app/releases/stable/2.3.103559/win32/TRAE_CN-Setup-x64.exe",
+    "hash": "6b9403f11a0f9a798e064d756b60c10de84dc121a21f625d60e483cfdeb2ef94",
+    "innosetup": true,
+    "extract_dir": "{code_GetDestDir}",
+    "bin": [
+        [
+            "bin\\trae-cn.cmd",
+            "trae-cn"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Trae CN.exe",
+            "Trae CN"
+        ]
+    ],
+    "checkver": {
+        "url": "https://api.trae.cn/icube/api/v1/native/version/trae/cn/latest",
+        "jsonpath": "$.data.manifest.win32.versions[?(@.region == 'cn')].url",
+        "regex": "stable/([\\d.]+)/win32/"
+    },
+    "autoupdate": {
+        "url": "https://lf-cdn.trae.com.cn/obj/trae-com-cn/pkg/app/releases/stable/$version/win32/TRAE_CN-Setup-x64.exe"
+    }
+}
