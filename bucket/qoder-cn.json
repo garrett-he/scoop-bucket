@@ -1,0 +1,57 @@
+{
+    "##": [
+        "China edition of Qoder from qoder.com.cn; the build published from qoder.com is a different product.",
+        "The vendor only links a stable 'latest' URL; this manifest uses the timestamped path .../releases/<version>/Qoder-CN-win-x64-user.exe so cached downloads stay tied to one version.",
+        "Version and SHA-256 are read from the electron-updater feed .../releases/latest.yml, so checkver and the autoupdate hash never download the 257 MiB installer.",
+        "The NSIS installer embeds the app as $PLUGINSDIR\\app-64.7z; the installer script expands it into $dir, which produces the flat Electron layout with \"Qoder CN.exe\" at the root.",
+        "This is the per-user (win-x64-user) package that the download page serves; win-x64-system is a separate artifact.",
+        "Since 0.5.11 Qoder ships a Windows Launcher: on startup PZx() reads %LOCALAPPDATA%\\Qoder CN\\Qoder CN Launcher\\state.ini and aborts with WINDOWS_LAUNCHER_STATE_MISSING when it is absent. The NSIS installer writes it through QoderInstallerHelper.exe, which unpacking app-64.7z skips entirely. Verified unchanged in 0.5.12: cg() parses flat key=value lines and vrx() only checks installDir/appExecutable.",
+        "post_install recreates that state file as a flat key=value ini. $dir at post_install time is the 'current' junction returned by link_current, so installDir matches process.execPath of the shim and the app's vrx()/BB()/bl0() checks resolve appExecutable back to the running exe."
+    ],
+    "version": "0.5.13",
+    "description": "Agent workbench for human and AI software teams (China edition)",
+    "homepage": "https://qoder.com.cn/",
+    "license": "Proprietary",
+    "notes": [
+        "The installer stubs ($PLUGINSDIR, $R8 uninstaller, uninstallerIcon.ico) are dropped, so Scoop owns the uninstall.",
+        "Startup requires \"$env:LOCALAPPDATA\\Qoder CN\\Qoder CN Launcher\\state.ini\", which this manifest creates during install. If it is deleted, run 'scoop reinstall qoder-cn'.",
+        "The bundled electron-updater stays enabled and downloads updates into \"$env:LOCALAPPDATA\\qoder-cn-updater\". Prefer 'scoop update qoder-cn' so the launcher state keeps matching the app directory."
+    ],
+    "url": "https://qoder-app.oss-cn-beijing.aliyuncs.com/qoder-app/releases/0.5.13/Qoder-CN-win-x64-user.exe#/dl.7z",
+    "hash": "158e177cdd0baefc837d0b4a4f13b67f69cc1d45b78c9ea2f975679b5ed6562a",
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir -Removal",
+            "Remove-Item \"$dir\\`$*\", \"$dir\\uninstallerIcon.ico\" -Force -Recurse -ErrorAction SilentlyContinue"
+        ]
+    },
+    "post_install": [
+        "$stateDir = Join-Path $env:LOCALAPPDATA 'Qoder CN\\Qoder CN Launcher'",
+        "[System.IO.Directory]::CreateDirectory($stateDir) | Out-Null",
+        "$state = \"status=healthy`r`ninstallDir=$dir`r`nappExecutable=Qoder CN.exe`r`n\"",
+        "[System.IO.File]::WriteAllText((Join-Path $stateDir 'state.ini'), $state, (New-Object System.Text.UTF8Encoding($false)))"
+    ],
+    "bin": [
+        [
+            "Qoder CN.exe",
+            "qoder-cn"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Qoder CN.exe",
+            "Qoder CN"
+        ]
+    ],
+    "checkver": {
+        "url": "https://qoder-app.oss-cn-beijing.aliyuncs.com/qoder-app/releases/latest.yml",
+        "regex": "version:\\s*([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://qoder-app.oss-cn-beijing.aliyuncs.com/qoder-app/releases/$version/Qoder-CN-win-x64-user.exe#/dl.7z",
+        "hash": {
+            "url": "https://qoder-app.oss-cn-beijing.aliyuncs.com/qoder-app/releases/latest.yml",
+            "regex": "sha256:\\s*([a-f0-9]{64})"
+        }
+    }
+}
