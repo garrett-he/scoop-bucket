@@ -1,0 +1,85 @@
+{
+    "##": [
+        "The installer is a PE with the payload stored as a ZIP resource; 7-Zip opens it directly, so the URL carries a #/dl.7z fragment to make Scoop unpack instead of execute it.",
+        "Unpacking yields install\\{YYAnchor.exe, Launcher.xml, <version>\\}; the vendor layout is kept on purpose because the 289 KiB YYAnchor.exe is a launcher that loads the versioned mainframe.dll named by Launcher.xml.",
+        "The payload carries the embedded OBS the app starts as obs\\bin\\64bit\\yyobs.exe. Its browser module needs libcef.dll, which the vendor setup copies from the payload root into obs\\bin\\64bit after unpacking; extraction alone leaves obs-browser.dll unloadable, so post_install repeats that copy.",
+        "The manifest version follows the CDN directory (X.Y.Z.0), not the build number in the PE (3.19.0.5576), so the autoupdate URL substitution stays valid.",
+        "No checkver: the vendor gates every version source behind request signing. v.yy.com resolves the installer through lpfm2-download.yy.com/installer/getInstaller, which answers 204 'no installer' outside the mainland service, and up.yy.com/api/check/yyanchor/check4update needs an MD5 nonce and returns 'no rule found' for every sourceVersion tried. Bump version and hash by hand.",
+        "Virtual camera registration is deliberately opt-in: regsvr32 writes HKLM\\Software\\Classes and needs UAC, so doing it in post_install would break unattended 'scoop update *'. installer.script writes register-virtualcam.ps1 into the app dir instead, matching the extras/obs-studio and streaming-tool manifests in this bucket.",
+        "YYVCamService.exe --regYYVCam is not reused: it resolves \\Stable\\YYVirtualCam*.ax through HKCU\\Software\\Duowan\\YYAnchor, a layout the Scoop package does not have. The generated script calls regsvr32 on the unpacked files directly; obs-virtualsource.dll is registered with /n /i:1 to install one OBS camera through DllInstall."
+    ],
+    "version": "3.19.0.0",
+    "description": "YY Anchor live-streaming studio with virtual camera output for Windows",
+    "homepage": "https://v.yy.com/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.yy.com/web/duty/legal-notice.html"
+    },
+    "notes": [
+        "Only the x64 build is published.",
+        "The installer build is 3.19.0.5576, as shown in the app; the manifest version tracks the CDN directory 3.19.0.0 so the download and autoupdate URLs stay valid.",
+        "The unpacked layout is the vendor one: YYAnchor.exe (launcher), Launcher.xml and the versioned payload directory. Do not flatten it.",
+        "The bundled update.exe updates the app in place, which adds a new version directory under the Scoop app folder. Reinstalling with 'scoop install yy-anchor -f' returns to the packaged build.",
+        "The virtual camera is NOT registered by Scoop. The payload ships five self-registering DirectShow filters: YYVirtualCam.ax, YYVirtualCamMul.ax, their _x86 twins, and obs\\bin\\64bit\\obs-virtualsource.dll (which provides 'OBS Virtual Cam' / 'OBS-Camera'). Only the vendor setup registers them.",
+        "Enable the camera by running '& \"$dir\\register-virtualcam.ps1\"' from any PowerShell; the script self-elevates via UAC. Pass '-Unregister' before uninstalling, and re-run it after every yy-anchor update because the registered paths include the versioned build folder.",
+        "obs-virtualsource.dll is 64-bit only; the _x86 .ax filters are what 32-bit programs see. Registration needs administrator rights because it writes HKLM\\Software\\Classes.",
+        "Launching the app can hand off to the vendor setup, which installs a second, per-user copy under %LOCALAPPDATA%\\duowan\\yyanchor and repoints HKCU\\Software\\Duowan\\YYAnchor at it. That copy sits outside Scoop and needs its own Uninstall.exe to be removed.",
+        "User data, logs and cache live in the YYAnchor folders under %APPDATA% and %LOCALAPPDATA%, so nothing is persisted by Scoop."
+    ],
+    "url": "https://yydl.yy.com/client/yyanchor/3.19.0.0/YYAnchorSetup-3.19.0.0.exe#/dl.7z",
+    "hash": "9b04c0fea6f112739a0f5f90e15f5bfaadba033a2cdf91b9fbe2e543146fb032",
+    "extract_dir": "install",
+    "installer": {
+        "script": [
+            "$vcScript = @'",
+            "param([switch]$Unregister)",
+            "$ErrorActionPreference = 'Stop'",
+            "$admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)",
+            "if (-not $admin) {",
+            "    $psExe = Join-Path $env:WINDIR 'System32\\WindowsPowerShell\\v1.0\\powershell.exe'",
+            "    $psArgs = '-NoProfile -ExecutionPolicy Bypass -File \"' + $MyInvocation.MyCommand.Path + '\"'",
+            "    if ($Unregister) { $psArgs += ' -Unregister' }",
+            "    Start-Process $psExe -Verb RunAs -ArgumentList $psArgs -Wait",
+            "    exit",
+            "}",
+            "$root = Split-Path $MyInvocation.MyCommand.Path -Parent",
+            "$vc = Get-ChildItem $root -Directory | Where-Object { Test-Path (Join-Path $_.FullName 'obs\\bin\\64bit') } | Select-Object -First 1",
+            "if (-not $vc) { throw 'Versioned payload folder with obs\\bin\\64bit not found.' }",
+            "$r64 = Join-Path $env:WINDIR 'System32\\regsvr32.exe'",
+            "$r32 = Join-Path $env:WINDIR 'SysWOW64\\regsvr32.exe'",
+            "$filters = @(",
+            "    @($r64, 'YYVirtualCam.ax'),",
+            "    @($r64, 'YYVirtualCamMul.ax'),",
+            "    @($r32, 'YYVirtualCam_x86.ax'),",
+            "    @($r32, 'YYVirtualCamMul_x86.ax')",
+            ")",
+            "foreach ($f in $filters) {",
+            "    $dll = Join-Path $vc.FullName $f[1]",
+            "    if ($Unregister) { & $f[0] /u /s $dll } else { & $f[0] /s $dll }",
+            "    if ($LASTEXITCODE -ne 0) { Write-Warning \"regsvr32 failed for $dll (exit $LASTEXITCODE)\" }",
+            "}",
+            "$obs = Join-Path $vc.FullName 'obs\\bin\\64bit\\obs-virtualsource.dll'",
+            "if ($Unregister) { & $r64 /u /s $obs } else { & $r64 /s /n /i:1 $obs }",
+            "if ($LASTEXITCODE -ne 0) { Write-Warning \"regsvr32 failed for $obs (exit $LASTEXITCODE)\" }",
+            "Write-Host 'Done. Restart camera apps; re-run this script after each yy-anchor update.'",
+            "'@",
+            "Set-Content (Join-Path $dir 'register-virtualcam.ps1') -Value $vcScript -Encoding UTF8"
+        ]
+    },
+    "post_install": "Get-ChildItem \"$dir\" -Directory | Where-Object { Test-Path (Join-Path $_.FullName 'obs\\bin\\64bit') } | ForEach-Object { Copy-Item (Join-Path $_.FullName 'libcef.dll') (Join-Path $_.FullName 'obs\\bin\\64bit\\libcef.dll') -Force }",
+    "bin": [
+        [
+            "YYAnchor.exe",
+            "yy-anchor"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "YYAnchor.exe",
+            "YY开播"
+        ]
+    ],
+    "autoupdate": {
+        "url": "https://yydl.yy.com/client/yyanchor/$version/YYAnchorSetup-$version.exe#/dl.7z"
+    }
+}
