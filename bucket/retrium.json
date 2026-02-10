@@ -1,0 +1,38 @@
+{
+    "version": "0.2.1",
+    "description": "A cross-platform application to organise your collection of old programs for DOSBox.",
+    "homepage": "https://github.com/garrett-he/retrium",
+    "license": "GPL-3.0",
+    "##": [
+        "The release asset is a Tauri NSIS installer, not a portable exe. Without the #/dl.7z fragment Scoop copies the setup exe into the app dir verbatim, so 'retrium.exe' never exists and shim creation fails with 'File doesn't exist'.",
+        "7-Zip unpacks the NSIS payload with 'retrium.exe' already at the archive root; no second-stage archive needs expanding, so installer leftovers are removed in post_install after shims and shortcuts exist.",
+        "autoupdate.hash is omitted: the GitHub release asset publishes a sha256 digest, so Github Mode supplies the hash without re-downloading the installer."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/garrett-he/retrium/releases/download/0.2.1/Retrium_0.2.1_x64-setup.exe#/dl.7z",
+            "hash": "6103a3afc8605239ca0603f64f9d5bbf23e1f8ec711ccb8ea4ff248699e874c3"
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninstall.exe\" -Recurse -Force -ErrorAction SilentlyContinue",
+    "bin": [
+        [
+            "retrium.exe",
+            "retrium"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "retrium.exe",
+            "Retrium"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/garrett-he/retrium/releases/download/$version/Retrium_$version_x64-setup.exe#/dl.7z"
+            }
+        }
+    }
+}
