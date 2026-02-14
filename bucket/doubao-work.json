@@ -1,0 +1,50 @@
+{
+    "##": [
+        "Doubao Work is the productivity brand of 豆包, but the desktop button on doubao.com/work hands out the same Windows client as doubao.com/download/desktop: the surl-token table in the web bundle only varies the attribution suffix, not the binary.",
+        "Windows x64 packaging only. The vendor also publishes Doubao_Arm64_installer_<version>.exe in the same folder, but this bucket mirrors feishu and ships the x64 build alone.",
+        "The installer is a custom PE (Beijing Chuntian Zhiyun, the Lark/Feishu 'Saman' framework), not NSIS or Inno: its payload is a zstd stream in resource .rsrc\\2052\\ZIP\\<id>, which expands to a 1.7 GB PAX tar holding the installed tree flat at the root. 7-Zip unpacks the PE and leaves the tar as a file named '<id>~', so the payload is a two-stage job and installer.script re-runs 7-Zip on whatever '*~' the first stage produced.",
+        "Extracting the tar is equivalent to running the installer with --command=quiet_install --target_dir=<dir>: the tar already carries lark_settings, 'First Run' and launcher\\uninstall.exe, so the vendor installer only untars it and then writes the registry, file associations and startup entry, which Scoop deliberately skips.",
+        "checkver reads the vendor's own upgrade-check endpoint. data.version is the minimum supported build (1.49.10, with a 'please upgrade' notice), data.newest_version is the build actually published under doubao_pc/.",
+        "The CDN publishes no checksum, so autoupdate.hash is omitted and Excavator recomputes the SHA-256 from the download."
+    ],
+    "version": "2.36.8",
+    "description": "Doubao Work desktop client, ByteDance's AI assistant for research, writing, data work and app building",
+    "homepage": "https://www.doubao.com/work",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.doubao.com/legal/terms"
+    },
+    "notes": [
+        "The GUI executable is Doubao.exe and is shimmed as 'doubao-work'; the running processes are named DoubaoX.",
+        "Profile, cache and logs live in %LOCALAPPDATA%\\Doubao and %APPDATA%\\Doubao, so nothing is persisted by Scoop.",
+        "Because the vendor installer is not run, there is no doubao:// protocol handler, Explorer context menu or autostart entry. Launch the app once from the shortcut if you want its own startup registration.",
+        "The bundled updater (update.exe) and the launcher in launcher\\ are left in place, but an in-app update rewrites files inside the Scoop app directory; decline it and run 'scoop update doubao-work' instead."
+    ],
+    "url": "https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao_pc/2.36.8/Doubao_installer_2.36.8.exe#/dl.7z",
+    "hash": "9a2ea3f09d962a2ac2009af735b8ac572459aae345892f8b02fc6db4f47b8cbd",
+    "installer": {
+        "script": [
+            "$payload = Get-ChildItem \"$dir\\*~\" -Force | Select-Object -First 1",
+            "Expand-7zipArchive $payload.FullName \"$dir\" -Removal"
+        ]
+    },
+    "bin": [
+        [
+            "Doubao.exe",
+            "doubao-work"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Doubao.exe",
+            "豆包工作"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.doubao.com/samantha/desktop/get_latest_version",
+        "jsonpath": "$.data.newest_version"
+    },
+    "autoupdate": {
+        "url": "https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao_pc/$version/Doubao_installer_$version.exe#/dl.7z"
+    }
+}
