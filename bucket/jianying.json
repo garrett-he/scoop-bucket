@@ -1,0 +1,56 @@
+{
+    "##": [
+        "Jianying Pro, the China edition of CapCut, for Windows x64.",
+        "The landing page only offers a 2.8 MiB online installer (jianying_jianyingpro_0_1.2.46_installer.exe), an NSIS stub with a downloader plugin that streams the real payload at run time, so it cannot be packaged.",
+        "The full offline package lives on the same ByteDance CDN as Jianying_<version>_jianyingpro_0_creatortool.exe; it is the file Microsoft's winget manifest (ByteDance.JianyingPro) installs with /silent_install=1. This manifest pins that package, so nothing is fetched during installation.",
+        "The package is a 7z self-extracting archive. Its root holds JianyingProPacket.xml plus a JYPacket folder: JYPacket\\JianyingPro.exe is a small launcher that resolves the version directory, and JYPacket\\<version>\\ is the Qt application itself. Moving JYPacket\\* up one level reproduces the layout the vendor creates under %LOCALAPPDATA%\\JianyingPro\\Apps.",
+        "The flatten step is mandatory. With the launcher still inside JYPacket, it logs 'xml no exist' for JYPacket\\JianyingProPacket.xml, hands off to the versioned exe and that process exits within seconds without writing a single log; with the xml beside the launcher the app comes up normally.",
+        "Only the x64 build has an offline package; the ARM build is served by a separate link on the download page and has no creatortool counterpart.",
+        "Version detection reads Microsoft's winget-pkgs repository, because the vendor publishes no version endpoint: the landing page hardcodes the downloader version (1.2.46), which does not track the app, and the app's own update API needs signed query parameters.",
+        "The winget yaml carries the installer SHA-256, but raw.githubusercontent.com is unreachable from mainland networks while api.github.com is, so autoupdate has no hash source and Excavator recomputes the SHA-256 by downloading the package.",
+        "The CDN filename is the four-part version with dots replaced by underscores, hence $underscoreVersion in autoupdate."
+    ],
+    "version": "11.8.0.14778",
+    "description": "All-in-one desktop video editor with AI-assisted creation tools",
+    "homepage": "https://www.jianying.com/",
+    "license": "Proprietary",
+    "notes": [
+        "The package is unpacked, not installed, so the vendor's uninstaller entry, file associations and Start Menu items are not recreated.",
+        "Drafts, cache, login state and downloaded material live under %LOCALAPPDATA%\\JianyingPro\\User Data, so nothing is persisted by Scoop.",
+        "The bundled updater (JianyingPro-DiffUpgrade.exe and the tray process) is still active and may drop a newer version directory next to the packaged one; run 'scoop install jianying --force' to return to the version this manifest pins."
+    ],
+    "url": "https://lf3-package.vlabstatic.com/obj/faceu-packages/Jianying_11_8_0_14778_jianyingpro_0_creatortool.exe#/dl.7z",
+    "hash": "a3849e1f1d7c543fa62eeda0db84f319ebbbbf07ec84860a5791d2a6ff915654",
+    "installer": {
+        "script": [
+            "Get-ChildItem -Path \"$dir\\JYPacket\" -Force | Move-Item -Destination $dir -Force",
+            "Remove-Item \"$dir\\JYPacket\" -Recurse -Force"
+        ]
+    },
+    "bin": [
+        [
+            "JianyingPro.exe",
+            "jianying"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "JianyingPro.exe",
+            "剪映专业版"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.jianying.com/robots.txt",
+        "script": [
+            "$ProgressPreference = 'SilentlyContinue'",
+            "$headers = @{ 'User-Agent' = 'Scoop'; 'Accept' = 'application/vnd.github+json' }",
+            "if ($env:GITHUB_TOKEN) { $headers['Authorization'] = \"Bearer $env:GITHUB_TOKEN\" }",
+            "$items = Invoke-RestMethod -Headers $headers -Uri 'https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/b/ByteDance/JianyingPro'",
+            "$items | Where-Object { $_.type -eq 'dir' } | ForEach-Object { $_.name } | Where-Object { $_ -match '^\\d+(\\.\\d+){2,3}$' } | Sort-Object { [version]$_ } | Select-Object -Last 1"
+        ],
+        "regex": "(?<version>\\d+\\.\\d+\\.\\d+\\.\\d+)"
+    },
+    "autoupdate": {
+        "url": "https://lf3-package.vlabstatic.com/obj/faceu-packages/Jianying_$underscoreVersion_jianyingpro_0_creatortool.exe#/dl.7z"
+    }
+}
