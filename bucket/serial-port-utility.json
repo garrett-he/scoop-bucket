@@ -1,0 +1,42 @@
+{
+    "version": "6.6.8",
+    "description": "Serial port debugging tool with protocol decoding, plotting and scripting",
+    "homepage": "https://alithon.com",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://alithon.com/terms"
+    },
+    "##": [
+        "Windows filenames include the release date, so checkver captures the full filename.",
+        "The Inno Setup 6.7 archive needs innounp, which Scoop installs as a helper.",
+        "The vendor publishes a SHA-256 on the download page, so autoupdate avoids a download."
+    ],
+    "notes": "SPU Free has no time limit; Modbus, file transfer and send history require a Pro license.",
+    "url": "https://alithon.com/release/serial_port_utility_668_1001.exe",
+    "hash": "654c621b118cf1649249b4c81fc17867b86b66ea7e53ccd9f9796de9f0f5465c",
+    "innosetup": true,
+    "bin": [
+        [
+            "SerialPortUtility.exe",
+            "spu"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "SerialPortUtility.exe",
+            "Serial Port Utility"
+        ]
+    ],
+    "checkver": {
+        "url": "https://alithon.com/downloads",
+        "regex": "Serial Port Utility (?<version>[\\d.]+)</h1>[\\s\\S]*?<code>(?<filename>serial_port_utility_[\\d_]+\\.exe)</code>"
+    },
+    "autoupdate": {
+        "url": "https://alithon.com/release/$matchFilename",
+        "hash": {
+            "mode": "extract",
+            "url": "https://alithon.com/downloads",
+            "find": "$matchFilename[\\s\\S]*?$sha256"
+        }
+    }
+}
