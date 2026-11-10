@@ -1,0 +1,25 @@
+{
+    "##": "Download URLs use underscores in the version, hence $underscoreVersion in autoupdate.url.",
+    "version": "10.6.0",
+    "description": "Visual database designer and manager with schema diagrams, SQL editor and data tools",
+    "homepage": "https://dbschema.com",
+    "license": "Proprietary",
+    "notes": "DbSchema is commercial software and requires a license after the trial period.",
+    "url": "https://dbschema.com/download/dbschema_windows_10_6_0.zip",
+    "hash": "4cc4d0691358324e197d0bd3ecb8223a137da9994e1fd1b28c0f44d0bf8be0e2",
+    "extract_dir": "DbSchema",
+    "bin": "DbSchema.exe",
+    "shortcuts": [
+        [
+            "DbSchema.exe",
+            "DbSchema"
+        ]
+    ],
+    "checkver": {
+        "url": "https://dbschema.com/download.html",
+        "regex": "Download DbSchema ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://dbschema.com/download/dbschema_windows_$underscoreVersion.zip"
+    }
+}
