@@ -1,0 +1,53 @@
+{
+    "##": [
+        "The upstream repo ships no LICENSE file; RadASM 2 is distributed as freeware.",
+        "Releases have no assets, so checkver reads the tag and autoupdate builds the Release/ zip URL."
+    ],
+    "version": "2.2.2.4",
+    "description": "Win32 assembly IDE supporting MASM, FASM, NASM, GoAsm and other assemblers",
+    "homepage": "https://github.com/mrfearless/RadASM2",
+    "license": "Freeware",
+    "notes": "INI configuration files in the install directory are kept across updates.",
+    "url": "https://github.com/mrfearless/RadASM2/blob/master/Release/RadASM-2.2.2.4-FullPackage.zip?raw=true",
+    "hash": "e70ddcda2f4dce8e642bd9ce7e1af4248ef7584180a5e7fec182438f0aa497c9",
+    "bin": "RadASM.exe",
+    "shortcuts": [
+        [
+            "RadASM.exe",
+            "RadASM"
+        ]
+    ],
+    "persist": [
+        "Asmc.ini",
+        "GoAsm.ini",
+        "HJWasm.ini",
+        "HJWasm32.ini",
+        "HJWasm64.ini",
+        "JWasm.ini",
+        "RadASM.ini",
+        "RadFavs.ini",
+        "UASM32.ini",
+        "UASM64.ini",
+        "bcc.ini",
+        "bcet.ini",
+        "cpp.ini",
+        "dm.ini",
+        "fasm.ini",
+        "fb.ini",
+        "fhla.ini",
+        "fp.ini",
+        "hla.ini",
+        "html.ini",
+        "lcc.ini",
+        "masm.ini",
+        "mingw.ini",
+        "nasm.ini",
+        "tasm.ini"
+    ],
+    "checkver": {
+        "github": "https://github.com/mrfearless/RadASM2"
+    },
+    "autoupdate": {
+        "url": "https://github.com/mrfearless/RadASM2/blob/master/Release/RadASM-$version-FullPackage.zip?raw=true"
+    }
+}
