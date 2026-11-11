@@ -1,0 +1,38 @@
+{
+    "version": "5.5.9",
+    "description": "Free, watermark-free screen recorder and live streaming tool for Windows",
+    "homepage": "https://www.ieway.cn/evcapture.html",
+    "license": "Proprietary",
+    "##": [
+        "Main Windows build only; the vendor also ships an arm64 build and a legacy 4.2.4 XP build.",
+        "checkver matches the 'Windows <version>' label; the XP compatibility link uses a different label.",
+        "innosetup is required because 7-Zip cannot open this Inno Setup 5.5.7 archive; Scoop adds innounp automatically.",
+        "autoupdate.hash is omitted: no checksum is published, so Excavator downloads the 40 MB installer to compute it."
+    ],
+    "notes": [
+        "Free for basic recording without watermarks; some advanced tools require a paid plan.",
+        "Extracted from the Inno Setup installer with innounp; no configuration files ship in the package."
+    ],
+    "url": "https://ctpublic.ieway.cn/public/download/EVCapture_v5.5.9.exe",
+    "hash": "ba516dc2a3a29674d41bd5af8e1bd1ad77736e03e89ac7b84dfbc304ff67229b",
+    "innosetup": true,
+    "bin": [
+        [
+            "EVCapture.exe",
+            "evcapture"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "EVCapture.exe",
+            "EV录屏"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.ieway.cn/evcapture.html",
+        "regex": "Windows\\s*(?<version>[\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://ctpublic.ieway.cn/public/download/EVCapture_v$version.exe"
+    }
+}
