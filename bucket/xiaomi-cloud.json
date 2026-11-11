@@ -1,0 +1,41 @@
+{
+    "version": "1.2.5",
+    "description": "Xiaomi Cloud (小米云服务) desktop client for Windows - sync photos, notes, contacts and drive files across devices.",
+    "homepage": "https://i.mi.com/",
+    "license": "Proprietary",
+    "##": [
+        "Windows 64-bit build only; the vendor also publishes an ia32 installer and a macOS dmg.",
+        "The NSIS installer embeds the real app as $PLUGINSDIR\\app-64.7z; post_install expands it and removes installer leftovers.",
+        "checkver reads the Windows exe version from Xiaomi's client download page (locale=zh_CN).",
+        "autoupdate.hash is omitted: no checksum is published, so Excavator downloads the installer and computes the hash."
+    ],
+    "url": "https://cdn.cnbj1.fds.api.mi-img.com/archive/update-server/public/win32/x64/XiaomiCloud-1.2.5.exe#/dl.7z",
+    "hash": "31fa7f8be8cf68238661ac4e4004e08acbfe89a9b4bb7c64ffd2668fbbc26573",
+    "post_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$TEMP\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "Remove-Item \"$dir\\Uninstall 小米云服务.exe\" -Force -ErrorAction SilentlyContinue"
+    ],
+    "bin": [
+        [
+            "小米云服务.exe",
+            "xiaomi-cloud"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "小米云服务.exe",
+            "Xiaomi Cloud"
+        ]
+    ],
+    "checkver": {
+        "url": "https://i.mi.com/static2?filename=MicloudWebStatic/res/home/mi-lab.htm&locale=zh_CN",
+        "re": "XiaomiCloud-(\\d+\\.\\d+\\.\\d+)\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://cdn.cnbj1.fds.api.mi-img.com/archive/update-server/public/win32/x64/XiaomiCloud-$version.exe#/dl.7z",
+        "hash": {
+            "mode": "download"
+        }
+    }
+}
