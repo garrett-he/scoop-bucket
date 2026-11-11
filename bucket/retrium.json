@@ -1,0 +1,31 @@
+{
+    "version": "0.1.0",
+    "description": "A cross-platform application to organise your collection of old programs for DOSBox.",
+    "homepage": "https://github.com/garrett-he/retrium",
+    "license": "GPL-3.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/garrett-he/retrium/releases/download/0.1.0/Retrium_0.1.0_x64-setup.exe",
+            "hash": "ff4eca11498c962e6ff24924ee71dbbe6927025432cf09fae1878841d12ae4d2"
+        }
+    },
+    "bin": [
+        [
+            "retrium.exe"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "retrium.exe",
+            "Retrium"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/garrett-he/retrium/releases/download/$version/Retrium_$version_x64-setup.exe"
+            }
+        }
+    }
+}
