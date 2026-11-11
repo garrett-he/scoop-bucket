@@ -1,0 +1,50 @@
+{
+    "version": "1.3.8",
+    "description": "Modu (默读) is a cross-platform e-book and PDF reader with AI-assisted translation, built with Flutter",
+    "homepage": "https://github.com/sobranie2406/modureader",
+    "license": "GPL-3.0-or-later",
+    "##": [
+        "Windows installers are built with Inno Setup 6.7.3 (not NSIS); Scoop extracts them with innounp.",
+        "Main executable is modu.exe, confirmed by upstream docs/RELEASING.md.",
+        "Both 64-bit and ARM64 Windows builds are shipped; the ARM64 payload is included.",
+        "autoupdate.hash is omitted: the GitHub release asset carries a sha256 digest that Excavator reads automatically.",
+        "The Windows build has no Authenticode signature; verify the SHA-256 from the release page."
+    ],
+    "notes": "Requires the Microsoft Edge WebView2 Runtime. The Windows build is not Authenticode-signed, so verify the published SHA-256 before trusting it.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/sobranie2406/modureader/releases/download/v1.3.8/Modu-1.3.8-windows-x64-setup.exe",
+            "hash": "d227a2f06c889323d483ee69593d3dab0cb003ac0fd918ba15dd2dc368481a32"
+        },
+        "arm64": {
+            "url": "https://github.com/sobranie2406/modureader/releases/download/v1.3.8/Modu-1.3.8-windows-arm64-setup.exe",
+            "hash": "819438085350a4943161b39b0e59b5f1e30aa1edae29f8c7fdb357f51828cbe5"
+        }
+    },
+    "innosetup": true,
+    "bin": [
+        [
+            "modu.exe",
+            "modu"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "modu.exe",
+            "Modu"
+        ]
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/sobranie2406/modureader/releases/latest"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/sobranie2406/modureader/releases/download/v$version/Modu-$version-windows-x64-setup.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/sobranie2406/modureader/releases/download/v$version/Modu-$version-windows-arm64-setup.exe"
+            }
+        }
+    }
+}
