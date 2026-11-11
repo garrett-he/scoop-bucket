@@ -1,0 +1,32 @@
+{
+    "version": "0.1.0",
+    "description": "Command-line tool that generates audio via the Xiaomi MiMo TTS service.",
+    "homepage": "https://github.com/garrett-he/mimo-tts",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/garrett-he/mimo-tts/releases/download/0.1.0/mimo-tts-0.1.0-win_x64.zip",
+            "hash": "3e053c602ed402ff902de990f5478640930a0c96124ecb797bc0ab1133fd8b73"
+        }
+    },
+    "bin": [
+        [
+            "mimo-tts.exe",
+            "mimo-tts"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "mimo-tts.exe",
+            "Mimo TTS"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/garrett-he/mimo-tts/releases/download/$version/mimo-tts-$version-win_x64.zip"
+            }
+        }
+    }
+}
