@@ -1,0 +1,36 @@
+{
+    "version": "2.0.1",
+    "description": "Free tool for personalizing and enhancing Windows 11",
+    "homepage": "https://github.com/iandiv/Win11Tweaker",
+    "license": "MIT",
+    "##": [
+        "The ZIP has a single win-x64 top folder; a duplicate publish/ build output is left in place.",
+        "Upstream misspells the asset as 'Protable' and changed its version token between v2.0.0 and v2.0.1, so checkver captures the full filename.",
+        "autoupdate.hash is omitted: the asset has no API digest, so Scoop downloads the 96 MB ZIP to recompute it.",
+        "Case Converter.ini holds the user hotkey and is persisted across upgrades."
+    ],
+    "notes": "Several tweaks change system settings and may require elevation.",
+    "url": "https://github.com/iandiv/Win11Tweaker/releases/download/v2.0.1/Win11_Tweaker_v2.0.1.Protable.win-x64.zip",
+    "hash": "91c9bd1ce15072a398f5c0e2f5f9e0e41156a1c248011ed775ba7dca311f80c0",
+    "extract_dir": "win-x64",
+    "bin": [
+        [
+            "Win11 Tweaker.exe",
+            "win11tweaker"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Win11 Tweaker.exe",
+            "Win11 Tweaker"
+        ]
+    ],
+    "persist": "Case Converter.ini",
+    "checkver": {
+        "url": "https://api.github.com/repos/iandiv/Win11Tweaker/releases/latest",
+        "regex": "\"tag_name\":\\s*\"v(?<version>[\\d.]+)\"[\\s\\S]*?\"name\":\\s*\"(?<filename>Win11_Tweaker_v[\\d.]+\\.Protable\\.win-x64\\.zip)\""
+    },
+    "autoupdate": {
+        "url": "https://github.com/iandiv/Win11Tweaker/releases/download/v$version/$matchFilename"
+    }
+}
