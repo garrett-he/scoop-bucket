@@ -1,0 +1,38 @@
+{
+    "version": "1.1.8",
+    "description": "FounderType font manager with cloud font activation for Windows",
+    "homepage": "https://www.foundertype.com/index.php/Index/ftXplorer/",
+    "license": "Proprietary",
+    "##": [
+        "Windows 64-bit build only; the vendor also publishes a 32-bit installer and a macOS dmg.",
+        "The NSIS installer is unpacked as 7z; post_install expands the embedded app-64.7z and removes installer leftovers.",
+        "checkver reads the version from the windowLoadHref variable on the download page.",
+        "autoupdate.hash is omitted: no checksum is published, so Excavator downloads the 90 MB installer."
+    ],
+    "notes": "The client is free; commercial use of FounderType fonts requires a license.",
+    "url": "https://cdn13zk.foundertype.com/fclient/pro/windows/1.1.8/FounderClient_1.1.8.exe#/dl.7z",
+    "hash": "c32b9ccaeb3d858604a76e6a2a92449331ab21886928aa4c576c59fc00a3b648",
+    "post_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force -ErrorAction SilentlyContinue"
+    ],
+    "bin": [
+        [
+            "方正字库.exe",
+            "founder"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "方正字库.exe",
+            "方正字库客户端"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.foundertype.com/index.php/Index/ftXplorer/",
+        "regex": "windowLoadHref\\s*=\\s*\"[^\"]*/windows/(?<version>[\\d.]+)/FounderClient_[\\d.]+\\.exe\""
+    },
+    "autoupdate": {
+        "url": "https://cdn13zk.foundertype.com/fclient/pro/windows/$version/FounderClient_$version.exe#/dl.7z"
+    }
+}
