@@ -1,0 +1,38 @@
+{
+    "version": "5.3.1.0",
+    "description": "ToDesk remote desktop client for Windows",
+    "homepage": "https://www.todesk.com/download.html",
+    "license": "Proprietary",
+    "##": [
+        "Windows 64-bit payload only; the NSIS installer carries both app64.7z and app32.7z.",
+        "post_install expands app64.7z and removes the NSIS leftovers and the unused 32-bit payload.",
+        "checkver reads win_link from the Nuxt state on the download page to skip the gray release.",
+        "autoupdate.hash is omitted: the vendor publishes no checksum, so Excavator downloads the 150 MB installer."
+    ],
+    "notes": "Unpacked layout: the vendor setup normally registers services and virtual drivers, so some features may require elevation on first launch.",
+    "url": "https://dl.todesk.com/irrigation/ToDesk_5.3.1.0.exe#/dl.7z",
+    "hash": "bdb2dc5c6118f7228223547832a0a8cfec51c1a5e6840589430eb15c3b3c963a",
+    "post_install": [
+        "Expand-7zipArchive \"$dir\\app64.7z\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\app32.7z\", \"$dir\\`$PLUGINSDIR\" -Recurse -Force -ErrorAction SilentlyContinue"
+    ],
+    "bin": [
+        [
+            "ToDesk.exe",
+            "todesk"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "ToDesk.exe",
+            "ToDesk"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.todesk.com/download.html",
+        "regex": "win_link:.{0,120}?ToDesk_(?<version>[\\d.]+)\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://dl.todesk.com/irrigation/ToDesk_$version.exe#/dl.7z"
+    }
+}
