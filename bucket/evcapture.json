@@ -1,5 +1,5 @@
 {
-    "version": "5.5.9",
+    "version": "5.5.6",
     "description": "Free, watermark-free screen recorder and live streaming tool for Windows",
     "homepage": "https://www.ieway.cn/evcapture.html",
     "license": "Proprietary",
@@ -13,8 +13,8 @@
         "Free for basic recording without watermarks; some advanced tools require a paid plan.",
         "Extracted from the Inno Setup installer with innounp; no configuration files ship in the package."
     ],
-    "url": "https://ctpublic.ieway.cn/public/download/EVCapture_v5.5.9.exe",
-    "hash": "ba516dc2a3a29674d41bd5af8e1bd1ad77736e03e89ac7b84dfbc304ff67229b",
+    "url": "https://ctpublic.ieway.cn/public/download/EVCapture_v5.5.6.exe",
+    "hash": "662f44393ca91a139d140c77262e7e7e75bfe4d77695b1ff7645839bfd7b7ac1",
     "innosetup": true,
     "bin": [
         [
