@@ -1,0 +1,31 @@
+{
+    "version": "8.10.3.102",
+    "description": "Baidu Netdisk (百度网盘) client for Windows.",
+    "homepage": "https://pan.baidu.com/download",
+    "license": "freeware",
+    "url": "https://issuepcdn.baidupcs.com/issue/netdisk/yunguanjia/BaiduNetdisk_8.10.3.102.exe#/dl.7z",
+    "hash": "509864c8da5ed3aedb34db456565d7850f1fd8b34596243a51bc2c43fce1b4c9",
+    "bin": [
+        [
+            "BaiduNetdisk.exe",
+            "baidupan"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "BaiduNetdisk.exe",
+            "Baidu Netdisk"
+        ]
+    ],
+    "persist": "users",
+    "checkver": {
+        "url": "https://pan.baidu.com/disk/cmsdata?do=client",
+        "re": "BaiduNetdisk_(\\d+\\.\\d+\\.\\d+\\.\\d+)\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://issuepcdn.baidupcs.com/issue/netdisk/yunguanjia/BaiduNetdisk_$version.exe#/dl.7z",
+        "hash": {
+            "mode": "download"
+        }
+    }
+}
