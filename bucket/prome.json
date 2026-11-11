@@ -1,0 +1,31 @@
+{
+    "version": "1.1.0",
+    "description": "A personal AI prompts management tool to store, organize, and quickly retrieve LLM prompts",
+    "homepage": "https://github.com/garrett-he/prome",
+    "license": "MIT",
+    "##": [
+        "Windows build is shipped as a portable ZIP (win_x64 only); no installer.",
+        "autoupdate.hash is omitted: the GitHub release asset carries a sha256 digest that Excavator reads automatically.",
+        "Prompt vaults live in user-chosen folders (one prome.db SQLite file per vault), so nothing under the app dir needs persisting."
+    ],
+    "url": "https://github.com/garrett-he/prome/releases/download/1.1.0/prome-1.1.0-win_x64.zip",
+    "hash": "b87ba5c98321a22dd45e5f3ba5e3a70a468f3c35bf0f324f3d3bfccc16a8ea4e",
+    "bin": [
+        [
+            "prome.exe",
+            "prome"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "prome.exe",
+            "Prome"
+        ]
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/garrett-he/prome/releases/latest"
+    },
+    "autoupdate": {
+        "url": "https://github.com/garrett-he/prome/releases/download/$version/prome-$version-win_x64.zip"
+    }
+}
