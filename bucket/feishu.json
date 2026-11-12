@@ -1,5 +1,5 @@
 {
-    "version": "8.5.6",
+    "version": "8.6.13",
     "description": "Feishu (Lark) desktop collaboration client for Windows",
     "homepage": "https://www.feishu.cn/",
     "license": {
@@ -11,8 +11,8 @@
         "The autoupdate hash comes from the vendor API (MD5), avoiding a 500 MB download."
     ],
     "notes": "Extracted from the 7z self-extracting installer; the archive has a flat layout.",
-    "url": "https://sf3-cn.feishucdn.com/obj/ee-appcenter/eceb63d3/Feishu-win32_x64-8.5.6-signed.exe#/dl.7z",
-    "hash": "aa6c7464503c0f37851efc35f8e3142ca2db5d8d30d9e0879086db7cb04a6b3e",
+    "url": "https://sf3-cn.feishucdn.com/obj/ee-appcenter/66bd5227/Feishu-win32_x64-8.6.13-signed.exe#/dl.7z",
+    "hash": "md5:f5202819cb9a06cceeb138de42c970d0",
     "bin": [
         [
             "Feishu.exe",
