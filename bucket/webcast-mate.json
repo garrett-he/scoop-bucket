@@ -1,0 +1,54 @@
+{
+    "##": [
+        "Douyin live streaming companion (直播伴侣) from streamingtool.douyin.com.",
+        "The download button on the site 301s to the stale StreamingTool-11.3.3-x86.exe build (2025-12) and ignores the arch parameter; the current release is the x64 build from the same CDN path, verified against ByteDance.StreamingTool in winget-pkgs (same SHA-256).",
+        "ByteDance publishes no version API and no checksum, so checkver reads the version directory listing of the winget-pkgs manifest (maintained automatically) and autoupdate.hash is omitted.",
+        "The NSIS installer only wraps a single $_41_\\app.7z; the installer script expands it into $dir, which yields the flat layout the app shell expects, with \"直播伴侣.exe\" at the root.",
+        "The app is x64 only; the 11.3.3 x86 build is the last 32-bit release and is a different version, so there is no 32bit architecture block."
+    ],
+    "version": "13.2.4",
+    "description": "Douyin live streaming companion (直播伴侣)",
+    "homepage": "https://streamingtool.douyin.com/",
+    "license": "Proprietary",
+    "notes": [
+        "The NSIS stubs ($PLUGINSDIR, $_41_, the versioned uninstaller) are dropped, so Scoop owns the uninstall.",
+        "User data, cache and logs go to \"$env:APPDATA\\webcast_mate\" and \"$env:APPDATA\\直播伴侣\", so nothing needs to be persisted.",
+        "The bundled app_shell_updater stays enabled and may add its own versioned folders inside the Scoop app dir; run 'scoop install webcast-mate -f' to get back to the packaged build.",
+        "The vendor installer also registers drivers and services (virtual camera, capture); this manifest only unpacks the app, so features that depend on those drivers need a manual install of the official setup."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://lf6-cdn-tos.douyinstatic.com/obj/venus/StreamingTool-13.2.4-x64.exe#/dl.7z",
+            "hash": "a623aae9f402d14dafc38962b0ef1aa1fa6ffa9d3c36d91d882809916be4d662"
+        }
+    },
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$_41_\\app.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir -Removal",
+            "Remove-Item \"$dir\\`$*\", \"$dir\\*Uninstaller.exe\" -Force -Recurse -ErrorAction Ignore",
+            "Get-ChildItem $dir -Directory | Where-Object { $_.Name -match '^\\d+(\\.\\d+)+\\.\\d+$' } | ForEach-Object { Remove-Item $_.FullName -Recurse -Force }"
+        ]
+    },
+    "shortcuts": [
+        [
+            "直播伴侣.exe",
+            "直播伴侣"
+        ]
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/b/ByteDance/StreamingTool",
+        "script": [
+            "$ProgressPreference = 'SilentlyContinue'",
+            "$items = Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/b/ByteDance/StreamingTool' -UseBasicParsing -Headers @{ 'User-Agent' = 'Scoop' } -TimeoutSec 30",
+            "($items | Where-Object { $_.type -eq 'dir' -and $_.name -match '^\\d+(\\.\\d+)+$' } | ForEach-Object { [version]$_.name } | Sort-Object -Descending | Select-Object -First 1).ToString()"
+        ],
+        "regex": "(?<version>\\d+(?:\\.\\d+)+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://lf6-cdn-tos.douyinstatic.com/obj/venus/StreamingTool-$version-x64.exe#/dl.7z"
+            }
+        }
+    }
+}
