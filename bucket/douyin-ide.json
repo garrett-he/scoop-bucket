@@ -1,0 +1,44 @@
+{
+    "##": [
+        "Windows build only; macOS ships separate arm64 and x64 packages.",
+        "The 365 MiB NSIS installer carries the whole Electron app in $PLUGINSDIR\\app-64.7z, so the outer layer is opened with #/dl.7z and post_install expands the inner archive.",
+        "The CDN path contains an internal build id (531320067 for 4.5.7) that cannot be derived from the version, so checkver captures it from the Windows download link on the release page.",
+        "The filename in that link is percent-encoded, but the version suffix stays ASCII, so the regex reads both the build id and the version from it.",
+        "The unpacked IDE stores its profile in %APPDATA%, so nothing is persisted; the installer's registry entries, file association and Start Menu entry are not recreated.",
+        "No checksum is published (the CDN only returns a base64 Content-MD5 header), so autoupdate.hash is omitted and Excavator downloads the installer to refresh the hash.",
+        "The IDE exposes no CLI, so 'bin' shims the GUI executable under the manifest name, as the other Electron apps in this bucket do."
+    ],
+    "version": "4.5.7",
+    "description": "Douyin (TikTok China) mini program developer tools",
+    "homepage": "https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/dev-tools/developer-instrument/download/developer-instrument-update-and-download",
+    "license": "Proprietary",
+    "notes": [
+        "Versions 4.1.6 and newer require Windows 10 or later.",
+        "Settings, extensions and project cache live in %APPDATA%, outside the Scoop app directory."
+    ],
+    "url": "https://sf1-cdn-tos.douyinstatic.com/obj/microapp/frontend/ide/package/obj/developer/ide/531320067/win32/%E6%8A%96%E9%9F%B3%E5%BC%80%E5%8F%91%E8%80%85%E5%B7%A5%E5%85%B7-4.5.7.exe#/dl.7z",
+    "hash": "df88acfe15ab4155f662b37b5240f2e35ec6aaf6c548b507fbd45518610fe25b",
+    "post_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\", \"$dir\\uninstallerIcon.ico\" -Recurse -Force -ErrorAction SilentlyContinue"
+    ],
+    "bin": [
+        [
+            "抖音开发者工具.exe",
+            "douyin-ide"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "抖音开发者工具.exe",
+            "抖音开发者工具"
+        ]
+    ],
+    "checkver": {
+        "url": "https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/dev-tools/developer-instrument/download/developer-instrument-update-and-download",
+        "regex": "/ide/(?<xid>\\d+)/win32/[^\"]*-(?<version>\\d+\\.\\d+\\.\\d+(?:-\\d+)?)\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://sf1-cdn-tos.douyinstatic.com/obj/microapp/frontend/ide/package/obj/developer/ide/$matchXid/win32/%E6%8A%96%E9%9F%B3%E5%BC%80%E5%8F%91%E8%80%85%E5%B7%A5%E5%85%B7-$version.exe#/dl.7z"
+    }
+}
