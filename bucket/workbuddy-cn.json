@@ -1,0 +1,41 @@
+{
+    "version": "5.9.3.42398134",
+    "description": "Full-scenario AI workbench from Tencent (China edition)",
+    "homepage": "https://www.workbuddy.cn/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.workbuddy.cn/document/term"
+    },
+    "##": [
+        "China edition from workbuddy.cn; the international build at workbuddy.ai is a separate package.",
+        "The vendor API only serves the win32-x64-user package, so the manifest is 64-bit only.",
+        "The NSIS installer is unpacked as 7z; the installer script expands the embedded $PLUGINSDIR\\app-64.7z and drops the NSIS leftovers.",
+        "The unpacked layout is flat and the main executable is WorkBuddy.exe.",
+        "autoupdate.hash reads sha256hash from the same JSON endpoint, so Excavator never downloads the 430 MB installer to refresh the hash."
+    ],
+    "url": "https://download.codebuddy.cn/workbuddy/saas/win32-x64-user/WorkBuddy-win32-x64-user-5.9.3.42398134-d4692421.exe#/dl.7z",
+    "hash": "b5edb52bd6c5b6c7296cf2fff697b019c86d11992a8a814c3010d611896852f9",
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir -Removal",
+            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse -ErrorAction Ignore"
+        ]
+    },
+    "shortcuts": [
+        [
+            "WorkBuddy.exe",
+            "WorkBuddy"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.workbuddy.cn/v2/update?platform=workbuddy-win32-x64-user",
+        "regex": "WorkBuddy-win32-x64-user-(?<version>[\\d.]+)-(?<sha>[0-9a-f]+)\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://download.codebuddy.cn/workbuddy/saas/win32-x64-user/WorkBuddy-win32-x64-user-$version-$matchSha.exe#/dl.7z",
+        "hash": {
+            "url": "https://www.workbuddy.cn/v2/update?platform=workbuddy-win32-x64-user",
+            "jp": "$.sha256hash"
+        }
+    }
+}
