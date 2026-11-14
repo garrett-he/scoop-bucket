@@ -1,0 +1,62 @@
+{
+    "##": [
+        "Xiaomi MiMo (小米 MiMo) desktop client, the China edition served from https://mimo.xiaomimimo.com/desktop/.",
+        "The landing page only links a moving alias, mimodesktop/XiaomiMiMo-latest-x64-setup.exe. The versioned file sits in the same folder as mimodesktop/XiaomiMiMo-<version>-x64-setup.exe and resolves to the same object: identical content-md5 0a3abaf72895c10e27db394ae8752391, 355576216 bytes.",
+        "The vendor publishes no version index, and the electron-updater feed named in resources/app-update.yml (provider generic, mimocode-cdn.xiaomimimo.com/mimocode/mimodesktop/) 404s on latest.yml, so checkver follows the winget-pkgs entry Xiaomi.MiMoDesktop.CN instead - the CN edition whose PackageUrl is exactly the page above. It takes the highest version folder under manifests/x/Xiaomi/MiMoDesktop/CN; the GitHub REST API is tried first and the HTML tree page is the fallback, because the unauthenticated API quota is shared per IP.",
+        "The installer is an NSIS-3 Unicode wrapper around $PLUGINSDIR\\app-64.7z, which holds the Electron app flat with 'Xiaomi MiMo.exe' at the root. $R0 only carries 'Uninstall Xiaomi MiMo.exe', and $PLUGINSDIR also carries the vendor's mimo-app-processes.ps1 process guard used by its own install and upgrade path.",
+        "Only win32-x64 is published for Windows.",
+        "autoupdate.hash reads winget's InstallerSha256 from the same version folder, so a bump costs no 340 MiB download; the pinned hash equals both that value and the local SHA-256 of the 26.1113.130848 build."
+    ],
+    "version": "26.1113.130848",
+    "description": "Xiaomi MiMo desktop client for writing, slides, spreadsheets, scheduled tasks and coding (小米 MiMo 桌面客户端)",
+    "homepage": "https://mimo.xiaomimimo.com/desktop/",
+    "license": "Proprietary",
+    "notes": [
+        "The NSIS stub ($PLUGINSDIR and 'Uninstall Xiaomi MiMo.exe') is dropped, so Scoop owns the uninstall.",
+        "Sign-in state, sessions and the runtime resources the app seeds on first run live under \"$env:APPDATA\\Xiaomi MiMo\", and the updater cache under \"$env:LOCALAPPDATA\\xiaomi-mimo-desktop-updater\", so nothing needs to be persisted.",
+        "The bundled updater stays enabled. An in-app update runs the vendor installer, which installs a per-user copy outside the Scoop app directory instead of replacing it; run 'scoop install mimo-desktop -f' afterwards to return to the packaged build.",
+        "Because the installer is unpacked rather than executed, the xiaomi-mimo:// protocol handler the vendor registers is not created."
+    ],
+    "url": "https://mimocode-cdn.xiaomimimo.com/mimocode/mimodesktop/XiaomiMiMo-26.1113.130848-x64-setup.exe#/dl.7z",
+    "hash": "307fb6ac76a814fe0b3f1c3b671943d366a39b02a2924361af90d86b5e73ab02",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force"
+        ]
+    },
+    "bin": [
+        [
+            "Xiaomi MiMo.exe",
+            "mimo-desktop"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Xiaomi MiMo.exe",
+            "Xiaomi MiMo"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$ProgressPreference = 'SilentlyContinue'",
+            "$headers = @{ 'User-Agent' = 'Scoop' }",
+            "$names = $null",
+            "try {",
+            "    $names = (Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/x/Xiaomi/MiMoDesktop/CN' -Headers $headers -TimeoutSec 30) | Where-Object { $_.type -eq 'dir' } | ForEach-Object { $_.name }",
+            "} catch {",
+            "    $tree = Invoke-WebRequest -Uri 'https://github.com/microsoft/winget-pkgs/tree/master/manifests/x/Xiaomi/MiMoDesktop/CN' -Headers $headers -UseBasicParsing -TimeoutSec 30",
+            "    $names = [regex]::Matches($tree.Content, '\"name\":\"(\\d+(?:\\.\\d+)+)\"') | ForEach-Object { $_.Groups[1].Value }",
+            "}",
+            "$names | Where-Object { $_ -match '^[0-9.]+$' } | Sort-Object { [version]$_ } | Select-Object -Last 1"
+        ],
+        "regex": "(?<version>\\d+(?:\\.\\d+)+)"
+    },
+    "autoupdate": {
+        "url": "https://mimocode-cdn.xiaomimimo.com/mimocode/mimodesktop/XiaomiMiMo-$version-x64-setup.exe#/dl.7z",
+        "hash": {
+            "url": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/x/Xiaomi/MiMoDesktop/CN/$version/Xiaomi.MiMoDesktop.CN.installer.yaml",
+            "regex": "InstallerSha256:\\s*([a-fA-F\\d]{64})"
+        }
+    }
+}
