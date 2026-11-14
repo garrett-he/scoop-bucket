@@ -1,0 +1,47 @@
+{
+    "##": [
+        "pen.dev, the agentic design canvas of High Agency, Inc.; the vendor page is https://www.pen.dev/.",
+        "The downloads page's Windows button serves https://www.pen.dev/download/Pen-win-x64.exe, which answers 302 to a five-minute signed URL on the private GCS bucket pencil-desktop-releases. The object name carries no version, so that URL cannot pin a release.",
+        "resources/app-update.yml inside the payload points the bundled electron-updater at the GitHub repository highagency/pen-desktop-releases, and that repository publishes versioned artifacts for every release. The manifest therefore pins the versioned GitHub asset; the redirecting /download/Pen-win-x64.exe served the same bytes at the time of writing (SHA-256 0da01b60229f82176c5ceb2730f9c84bd3f70407e344ff2b1e4cc85126bd3ccf).",
+        "The version is confirmed twice inside the payload: resources/app.asar reports package.json version 1.2.23, and the NSIS stub's PE metadata reports FileVersion 1.2.23.",
+        "The installer is NSIS-3 Unicode: $PLUGINSDIR\\app-64.7z holds the 236-entry app flat, with Pen.exe at the root, and $R0 only carries 'Uninstall Pen.exe'. The installer script expands the payload into $dir and drops both folders.",
+        "Only win-x64 is published for Windows; the downloads page lists the ARM64 build as 'coming soon' and the release carries no such asset.",
+        "checkver uses the GitHub API, which returns tag_name v1.2.23 for the version group. autoupdate.hash is omitted on purpose, so Scoop reads the sha256 digest that the same API publishes for each asset."
+    ],
+    "version": "1.2.23",
+    "description": "Agentic design canvas for building interfaces with AI agents",
+    "homepage": "https://www.pen.dev/",
+    "license": "Proprietary",
+    "notes": [
+        "The NSIS stubs ($PLUGINSDIR and the bundled 'Uninstall Pen.exe') are dropped, so Scoop owns the uninstall.",
+        "User data lives outside the app directory: the config folder and the .pen document store under \"$env:USERPROFILE\\.pencil\", the Chromium profile under \"$env:APPDATA%\\Pen\", and the updater cache in \"$env:LOCALAPPDATA%\\pen-updater\".",
+        "The bundled electron-updater stays enabled and pulls builds from highagency/pen-desktop-releases. An in-app update runs the vendor installer, which installs a per-user copy outside the Scoop app directory instead of replacing it; run 'scoop install pen -f' afterwards to return to the packaged build.",
+        "The 428 MiB download unpacks to about 1.5 GB, because resources\\app.asar.unpacked bundles the Claude Agent SDK, the OpenAI Codex CLI, Cursor tooling and a local MCP server for agent connections."
+    ],
+    "url": "https://github.com/highagency/pen-desktop-releases/releases/download/v1.2.23/Pen-1.2.23-win-x64.exe#/dl.7z",
+    "hash": "0da01b60229f82176c5ceb2730f9c84bd3f70407e344ff2b1e4cc85126bd3ccf",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force"
+        ]
+    },
+    "bin": [
+        [
+            "Pen.exe",
+            "pen"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Pen.exe",
+            "Pen"
+        ]
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/highagency/pen-desktop-releases/releases/latest"
+    },
+    "autoupdate": {
+        "url": "https://github.com/highagency/pen-desktop-releases/releases/download/v$version/Pen-$version-win-x64.exe#/dl.7z"
+    }
+}
