@@ -4,9 +4,10 @@
         "Every download button on the site is a tracking link to adl.netease.com, which renders a landing page holding a signed CDN URL (uu.gdl.netease.com/<release-id>/UU-<version>.exe?key1=...&key2=...). key2 decodes to the issue time plus 12 hours, so that URL cannot be recorded in a manifest.",
         "dl.uu.163.com serves the same object store without the signature: it returns the same Content-Length (43,168,760) and the file's MD5 equals the ETag of the signed CDN copy. It is the slower origin, but it stays valid, so that is what 'url' pins.",
         "The installer is a custom PE stub, not Inno Setup or NSIS: the payload is an LZMA2 7z archive in RCDATA resource 201. 7-Zip descends into that resource, so '#/dl.7z' needs a single pass and yields <release-id>\\ (123 files, uu.exe included), uu_launcher.exe, uu_agent.exe, uninstall.exe and VisualElements\\.",
-        "The release-id directory changes with every build (5256 for 6.23.0), so the installer script locates the directory that holds uu.exe and flattens it instead of hard-coding the name.",
+        "The release-id directory is part of the installed layout, not a staging folder: uu_launcher.exe probes '<release-id>\\uu.exe' with a relative path, so flattening it makes the launcher exit with a missing-runtime-file dialog. The name changes with every build (5256 for 6.23.0), so the installer only asserts that one of the extracted directories holds uu.exe and aborts if a build ever ships flat.",
+        "Because that probe is relative, the launcher must inherit a working directory of the app root: Scoop sets the shortcut's working directory to the target's folder, and the bin shim goes through a generated uu.cmd that does 'cd /d %~dp0' first.",
         "checkver reads the adl landing page because it is the only endpoint that carries the new version together with the matching release-id, which autoupdate needs to rebuild the URL.",
-        "The shortcut and bin point at uu_launcher.exe, not uu.exe: update.exe relaunches the launcher after an update, so it is the stable entry point, and both binaries request elevation anyway.",
+        "The shortcut and bin still go through uu_launcher.exe, not uu.exe: update.exe relaunches the launcher after an update, so it is the stable entry point, and both binaries request elevation anyway.",
         "The vendor publishes no checksum, so autoupdate has no hash source and the Excavator recomputes the SHA-256 on update."
     ],
     "version": "6.23.0",
@@ -23,14 +24,15 @@
     "hash": "11a48845b57827f553c45c8a66a99a96df476faac3e3a7b3a02a49c27d0ecf44",
     "installer": {
         "script": [
-            "$payload = Get-ChildItem $dir -Directory | Where-Object { Test-Path \"$($_.FullName)\\uu.exe\" } | Select-Object -First 1",
-            "if ($payload) { Move-Item \"$($payload.FullName)\\*\" $dir -Force; Remove-Item $payload.FullName -Recurse -Force }",
-            "Remove-Item \"$dir\\uninstall.exe\" -Force -ErrorAction Ignore"
+            "$build = Get-ChildItem $dir -Directory | Where-Object { Test-Path \"$($_.FullName)\\uu.exe\" } | Select-Object -First 1",
+            "if (-not $build) { abort 'No extracted directory holds uu.exe; the payload layout changed and the manifest needs an update.' }",
+            "Remove-Item \"$dir\\uninstall.exe\" -Force -ErrorAction Ignore",
+            "Set-Content \"$dir\\uu.cmd\" @('@echo off', 'cd /d \"%~dp0\"', 'start \"\" uu_launcher.exe') -Encoding Ascii"
         ]
     },
     "bin": [
         [
-            "uu_launcher.exe",
+            "uu.cmd",
             "uu"
         ]
     ],
