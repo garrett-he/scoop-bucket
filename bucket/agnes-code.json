@@ -1,0 +1,52 @@
+{
+    "##": [
+        "Agnes Code, the desktop AI workbench of Agnes AI (agnes-ai.com/agnescode).",
+        "The page's Windows button serves https://cos-agnes-code.agnes-ai.cn/release/latest/AgnesCode-Installer.exe, while the app's own electron-updater reads resources/app-update.yml (provider generic) and pulls AgnesCode-Setup.exe from the same latest/ prefix. Both files were opened: the payloads are identical (4693 entries, 1731880253 bytes, 3954 files), only the NSIS compression level differs, so the manifest pins Setup.exe because that is the file whose SHA-512 is published in latest.yml.",
+        "The object name carries no version and the COS bucket refuses listing, so the version comes from latest.yml. It is confirmed twice inside the payload: resources/agnes-build-manifest.json reports 1.1.5 and AgnesCode.exe carries ProductVersion 1.1.5.",
+        "The installer is electron-builder NSIS-3 Unicode (per-user, one-click): $PLUGINSDIR\\app-64.7z holds the app flat, with AgnesCode.exe at the root, and $R0 only carries 'Uninstall AgnesCode.exe'. The installer script expands the payload into $dir and drops both folders.",
+        "Only x64 is published; the page offers macOS on Apple silicon and Intel but no Windows ARM or 32-bit build.",
+        "checkver reads latest.yml, which the vendor regenerates on every release and serves with 'Cache-Control: max-age=0'.",
+        "autoupdate.hash pulls the base64 sha512 out of latest.yml through the $base64 template; Scoop decodes it to hex, and the decoded value matches the local SHA-512 of Setup.exe. Because the feed only publishes SHA-512, an auto-updated manifest carries a 'sha512:' digest while this initial one keeps the usual SHA-256."
+    ],
+    "version": "1.1.5",
+    "description": "AI coding desktop client with local project spaces, skills and MCP app connections",
+    "homepage": "https://agnes-ai.com/agnescode",
+    "license": "Proprietary",
+    "notes": [
+        "The NSIS stubs ($PLUGINSDIR and the bundled 'Uninstall AgnesCode.exe') are dropped, so Scoop owns the uninstall.",
+        "Settings, project indexes and chat history live under \"$env:APPDATA\\Agnes Code\", and the updater cache under \"$env:LOCALAPPDATA%\\agnescode-updater\", so nothing needs to be persisted.",
+        "The bundled electron-updater stays enabled. An in-app update runs the vendor installer, which creates a per-user copy outside the Scoop app directory instead of replacing it; run 'scoop install agnes-code -f' afterwards to return to the packaged build.",
+        "The download is 444 MiB and unpacks to about 1.7 GB, because resources\\bin carries its own Node, uv and the agnesd daemon."
+    ],
+    "url": "https://cos-agnes-code.agnes-ai.cn/release/latest/AgnesCode-Setup.exe#/dl.7z",
+    "hash": "a03d6c43f6912f937c178f9d62e3091b269bbb71ffff13a4f388543ffb552a8e",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force"
+        ]
+    },
+    "bin": [
+        [
+            "AgnesCode.exe",
+            "agnes-code"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "AgnesCode.exe",
+            "Agnes Code"
+        ]
+    ],
+    "checkver": {
+        "url": "https://cos-agnes-code.agnes-ai.cn/release/latest/latest.yml",
+        "regex": "version:\\s*([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://cos-agnes-code.agnes-ai.cn/release/latest/AgnesCode-Setup.exe#/dl.7z",
+        "hash": {
+            "url": "https://cos-agnes-code.agnes-ai.cn/release/latest/latest.yml",
+            "regex": "sha512:\\s*$base64"
+        }
+    }
+}
