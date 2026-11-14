@@ -1,0 +1,41 @@
+{
+    "##": [
+        "The installer is a PE with the payload stored as a ZIP resource; 7-Zip opens it directly, so the URL carries a #/dl.7z fragment to make Scoop unpack instead of execute it.",
+        "Unpacking yields install\\{YYAnchor.exe, Launcher.xml, <version>\\}; the vendor layout is kept on purpose because the 289 KiB YYAnchor.exe is a launcher that loads the versioned mainframe.dll named by Launcher.xml.",
+        "The manifest version follows the CDN directory (X.Y.Z.0), not the build number in the PE (3.19.0.5576), so the autoupdate URL substitution stays valid.",
+        "No checkver: the vendor gates every version source behind request signing. v.yy.com resolves the installer through lpfm2-download.yy.com/installer/getInstaller, which answers 204 'no installer' outside the mainland service, and up.yy.com/api/check/yyanchor/check4update needs an MD5 nonce and returns 'no rule found' for every sourceVersion tried. Bump version and hash by hand."
+    ],
+    "version": "3.19.0.0",
+    "description": "YY Anchor (YY开播) live-streaming studio with virtual camera output for Windows",
+    "homepage": "https://v.yy.com/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.yy.com/web/duty/legal-notice.html"
+    },
+    "notes": [
+        "Only the x64 build is published.",
+        "The installer build is 3.19.0.5576, as shown in the app; the manifest version tracks the CDN directory 3.19.0.0 so the download and autoupdate URLs stay valid.",
+        "The unpacked layout is the vendor one: YYAnchor.exe (launcher), Launcher.xml and the versioned payload directory. Do not flatten it.",
+        "The bundled update.exe updates the app in place, which adds a new version directory under the Scoop app folder. Reinstalling with 'scoop install yy-anchor -f' returns to the packaged build.",
+        "The DirectShow filters for the virtual camera (YYVirtualCam*.ax, YYVCamService.exe) only work once registered; that registration is done by the vendor installer, not by Scoop, so camera output in OBS/Zoom may need a manual registration step.",
+        "User data, logs and cache live in the YYAnchor folders under %APPDATA% and %LOCALAPPDATA%, so nothing is persisted by Scoop."
+    ],
+    "url": "https://yydl.yy.com/client/yyanchor/3.19.0.0/YYAnchorSetup-3.19.0.0.exe#/dl.7z",
+    "hash": "9b04c0fea6f112739a0f5f90e15f5bfaadba033a2cdf91b9fbe2e543146fb032",
+    "extract_dir": "install",
+    "bin": [
+        [
+            "YYAnchor.exe",
+            "yy-anchor"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "YYAnchor.exe",
+            "YY开播"
+        ]
+    ],
+    "autoupdate": {
+        "url": "https://yydl.yy.com/client/yyanchor/$version/YYAnchorSetup-$version.exe#/dl.7z"
+    }
+}
