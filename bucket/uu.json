@@ -1,0 +1,50 @@
+{
+    "##": [
+        "NetEase UU accelerator (网易UU加速器) from uu.163.com.",
+        "Every download button on the site is a tracking link to adl.netease.com, which renders a landing page holding a signed CDN URL (uu.gdl.netease.com/<release-id>/UU-<version>.exe?key1=...&key2=...). key2 decodes to the issue time plus 12 hours, so that URL cannot be recorded in a manifest.",
+        "dl.uu.163.com serves the same object store without the signature: it returns the same Content-Length (43,168,760) and the file's MD5 equals the ETag of the signed CDN copy. It is the slower origin, but it stays valid, so that is what 'url' pins.",
+        "The installer is a custom PE stub, not Inno Setup or NSIS: the payload is an LZMA2 7z archive in RCDATA resource 201. 7-Zip descends into that resource, so '#/dl.7z' needs a single pass and yields <release-id>\\ (123 files, uu.exe included), uu_launcher.exe, uu_agent.exe, uninstall.exe and VisualElements\\.",
+        "The release-id directory changes with every build (5256 for 6.23.0), so the installer script locates the directory that holds uu.exe and flattens it instead of hard-coding the name.",
+        "checkver reads the adl landing page because it is the only endpoint that carries the new version together with the matching release-id, which autoupdate needs to rebuild the URL.",
+        "The shortcut and bin point at uu_launcher.exe, not uu.exe: update.exe relaunches the launcher after an update, so it is the stable entry point, and both binaries request elevation anyway.",
+        "The vendor publishes no checksum, so autoupdate has no hash source and the Excavator recomputes the SHA-256 on update."
+    ],
+    "version": "6.23.0",
+    "description": "NetEase UU game accelerator (网易UU加速器)",
+    "homepage": "https://uu.163.com/",
+    "license": "Proprietary",
+    "notes": [
+        "uu.exe and uu_launcher.exe carry a requireAdministrator manifest, so Windows asks for elevation on every start: the accelerator installs a TAP/WFP driver and a Windows service at runtime.",
+        "The vendor uninstaller is dropped - it assumes a Program Files layout and its own registry entry - so Scoop owns the uninstall.",
+        "Logs are written into the app directory (config.txt sets 'logdir .'), so 'scoop update' clears them; no %APPDATA% or %LOCALAPPDATA% path appears in the payload, so there is nothing to persist.",
+        "The bundled updater (update.exe) stays enabled and may replace the app outside Scoop; run 'scoop install uu -f' to return to the packaged build."
+    ],
+    "url": "https://dl.uu.163.com/5256/UU-6.23.0.exe#/dl.7z",
+    "hash": "11a48845b57827f553c45c8a66a99a96df476faac3e3a7b3a02a49c27d0ecf44",
+    "installer": {
+        "script": [
+            "$payload = Get-ChildItem $dir -Directory | Where-Object { Test-Path \"$($_.FullName)\\uu.exe\" } | Select-Object -First 1",
+            "if ($payload) { Move-Item \"$($payload.FullName)\\*\" $dir -Force; Remove-Item $payload.FullName -Recurse -Force }",
+            "Remove-Item \"$dir\\uninstall.exe\" -Force -ErrorAction Ignore"
+        ]
+    },
+    "bin": [
+        [
+            "uu_launcher.exe",
+            "uu"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "uu_launcher.exe",
+            "UU Accelerator"
+        ]
+    ],
+    "checkver": {
+        "url": "https://adl.netease.com/d/g/uu/c/gw?type=pc",
+        "regex": "uu\\.gdl\\.netease\\.com/(?<dir>\\d+)/UU-(?<version>[\\d.]+)\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://dl.uu.163.com/$matchDir/UU-$version.exe#/dl.7z"
+    }
+}
