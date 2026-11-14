@@ -1,0 +1,63 @@
+{
+    "##": [
+        "Desktop client of QwenWork (千问办公), the DingTalk AI office assistant served from qwenwork.cn.",
+        "The download page only ever links the stable .../release/latest/ path: the filename carries no version and versioned paths (release/<version>/...) return 404, so the download URL is constant across releases.",
+        "The vendor publishes no machine-readable release metadata. Unlike the electron-updater apps in this bucket there is no latest.yml under .../release/latest/ (nor a blockmap, version.json or .sha256), and the in-app updater at https://clientupgrade.qwenwork.cn/upgrade/query only answers authenticated POSTs (a bare GET 302s to the homepage), so no endpoint yields a version string.",
+        "checkver therefore range-reads the first 4 MiB of the installer and decodes the UTF-16 resource strings. The PE version resource sits inside that prefix (resource section at RVA 0x293000, 54 KiB), and its FileVersion string is the build stamp (2.1.0.26111315 for the 2026-11-13 build). The 3-part ProductVersion (2.1.0) is deliberately not used: the vendor re-uploads the same 3-part release with a new build stamp, and a 3-part version would miss those rebuilds.",
+        "No checksum is published either, and the OSS ETag is a multipart MD5, so autoupdate.hash is deliberately absent: when the build stamp moves, Excavator downloads the 402 MiB installer once and hashes it locally.",
+        "The installer is an NSIS-3 Unicode 32-bit stub around $PLUGINSDIR\\app-64.7z; the installer script expands that inner archive into $dir and drops the NSIS leftovers ($PLUGINSDIR, the $R6 data blocks, 'Uninstall QwenWorkCN.exe' and uninstallerIcon.ico). The unpacked layout is flat, with QwenWorkCN.exe at the root.",
+        "Only the x64 build is packaged. The arm64 installer at the same path still served the 2026-11-10 payload while x64 had already moved to the 2026-11-13 one, and a single manifest cannot give the two architectures different versions."
+    ],
+    "version": "2.1.0.26111315",
+    "description": "AI office assistant for documents, slides, spreadsheets and web deliverables (千问办公)",
+    "homepage": "https://qwenwork.cn/",
+    "license": "Proprietary",
+    "notes": [
+        "The NSIS stubs are dropped, so Scoop owns the uninstall.",
+        "Sign-in state, the profile data and the agent runtime are written to \"$env:APPDATA\\QwenWorkCN\", so nothing needs to be persisted.",
+        "The bundled updater stays enabled. An in-app update runs the vendor installer, which installs a per-user copy outside the Scoop app directory instead of replacing it; run 'scoop install qwenwork-cn -f' afterwards to return to the packaged build.",
+        "The 402 MiB download unpacks to roughly 1.5 GiB in 7320 files, most of it the bundled agent runtimes, skills and Electron payload."
+    ],
+    "url": "https://assets.qwenwork.cn/release/latest/qwenworkcn-setup-x64.exe#/dl.7z",
+    "hash": "f696664a7f5dd658e840b13839af4ecfbc592b5165ec0fdbf12f3978017e5497",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R*\", \"$dir\\Uninstall QwenWorkCN.exe\", \"$dir\\uninstallerIcon.ico\" -Recurse -Force -ErrorAction Ignore"
+        ]
+    },
+    "bin": [
+        [
+            "QwenWorkCN.exe",
+            "qwenwork-cn"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "QwenWorkCN.exe",
+            "千问办公"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$ProgressPreference = 'SilentlyContinue'",
+            "$uri = 'https://assets.qwenwork.cn/release/latest/qwenworkcn-setup-x64.exe'",
+            "$request = [System.Net.WebRequest]::Create($uri)",
+            "$request.Method = 'GET'",
+            "$request.AddRange(0, 4194303)",
+            "$request.Timeout = 60000",
+            "$response = $request.GetResponse()",
+            "$stream = $response.GetResponseStream()",
+            "$buffer = New-Object byte[] 4194304",
+            "$read = 0",
+            "while ($read -lt $buffer.Length) { $n = $stream.Read($buffer, $read, $buffer.Length - $read); if ($n -le 0) { break }; $read += $n }",
+            "$stream.Dispose()",
+            "$response.Dispose()",
+            "[System.Text.Encoding]::Unicode.GetString($buffer, 0, $read)"
+        ],
+        "regex": "FileVersion[^\\d]{0,4}(?<version>\\d+(?:\\.\\d+)+)"
+    },
+    "autoupdate": {
+        "url": "https://assets.qwenwork.cn/release/latest/qwenworkcn-setup-x64.exe#/dl.7z"
+    }
+}
