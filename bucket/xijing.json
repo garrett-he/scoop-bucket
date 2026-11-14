@@ -1,0 +1,49 @@
+{
+    "##": [
+        "Xijing (戏鲸), the Pia戏 voice role-play client of aipiaxi.com.",
+        "The download page (aipiaxi.com/download) publishes a moving alias (.../app/pc/release.exe); this manifest uses the versioned installer from the vendor's own update feed (.../app/pc-new/windows/stable/latest.json), whose installerUrl points at .../windows/stable/Xijing-Setup-<version>.exe. Older versioned files stay online, so a recorded hash keeps working.",
+        "That feed is served with 'Cache-Control: max-age=31536000', which is why the site appends a per-request '?timestamp=' query. checkver therefore uses a script that appends its own timestamp instead of a plain jsonpath read, which could return a year-old edge copy.",
+        "autoupdate.hash is omitted for the same reason: Scoop cannot reproduce the cache-busting query, so the SHA-256 is recomputed by re-downloading the 90 MiB installer instead of trusting a possibly stale feed.",
+        "The NSIS installer is a plain payload (no embedded app-*.7z): the Flutter app already sits at the archive root with Xijing.exe, its plugin DLLs and data\\ beside it. Only $PLUGINSDIR and Uninstall.exe are dropped.",
+        "Xijing.exe imports msvcp140.dll/vcruntime140.dll and the installer ships VcRedistInstaller.exe instead of the runtime itself, so the 2015-2022 redistributable is a declared dependency."
+    ],
+    "version": "1.2.6",
+    "description": "Voice role-play (Pia戏) and dubbing community client (戏鲸)",
+    "homepage": "https://www.aipiaxi.com/",
+    "license": "Proprietary",
+    "depends": "extras/vcredist2022",
+    "notes": [
+        "The NSIS stubs ($PLUGINSDIR with WebView2Installer.exe and VcRedistInstaller.exe, Uninstall.exe) are dropped, so Scoop owns the uninstall.",
+        "User data, cache and logs are written under %APPDATA% and %LOCALAPPDATA%, so nothing needs to be persisted.",
+        "The bundled updater stays enabled and may prompt to update outside Scoop; run 'scoop install xijing -f' to return to the packaged build."
+    ],
+    "url": "https://static.aipiaxi.com/app/pc-new/windows/stable/Xijing-Setup-1.2.6.exe#/dl.7z",
+    "hash": "16a60859f9d43fe34e5340199fa858d8d2405fc441ea093b8dfd8c7a24612288",
+    "installer": {
+        "script": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe\" -Force -Recurse -ErrorAction Ignore"
+    },
+    "bin": [
+        [
+            "Xijing.exe",
+            "xijing"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Xijing.exe",
+            "戏鲸"
+        ]
+    ],
+    "checkver": {
+        "url": "https://static.aipiaxi.com/app/pc-new/windows/stable/latest.json",
+        "script": [
+            "$ProgressPreference = 'SilentlyContinue'",
+            "$feed = 'https://static.aipiaxi.com/app/pc-new/windows/stable/latest.json?timestamp=' + [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()",
+            "(Invoke-RestMethod -Uri $feed -UseBasicParsing -Headers @{ 'User-Agent' = 'Scoop' } -TimeoutSec 30).version"
+        ],
+        "regex": "(?<version>[\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://static.aipiaxi.com/app/pc-new/windows/stable/Xijing-Setup-$version.exe#/dl.7z"
+    }
+}
