@@ -1,0 +1,42 @@
+{
+    "##": [
+        "China edition of Qoder from qoder.com.cn; the build published from qoder.com is a different product.",
+        "The vendor only links a stable 'latest' URL; this manifest uses the timestamped path .../releases/<version>/Qoder-CN-win-x64-user.exe so cached downloads stay tied to one version.",
+        "Version and SHA-256 are read from the electron-updater feed .../releases/latest.yml, so checkver and the autoupdate hash never download the 257 MiB installer.",
+        "The NSIS installer embeds the app as $PLUGINSDIR\\app-64.7z; the installer script expands it into $dir, which produces the flat Electron layout with \"Qoder CN.exe\" at the root.",
+        "This is the per-user (win-x64-user) package that the download page serves; win-x64-system is a separate artifact."
+    ],
+    "version": "0.5.11",
+    "description": "Agent workbench for human and AI software teams (China edition)",
+    "homepage": "https://qoder.com.cn/",
+    "license": "Proprietary",
+    "notes": [
+        "The installer stubs ($PLUGINSDIR, $R8 uninstaller, uninstallerIcon.ico) are dropped, so Scoop owns the uninstall.",
+        "The bundled electron-updater stays enabled and downloads updates into \"$env:LOCALAPPDATA\\qoder-cn-updater\"."
+    ],
+    "url": "https://qoder-app.oss-cn-beijing.aliyuncs.com/qoder-app/releases/0.5.11/Qoder-CN-win-x64-user.exe#/dl.7z",
+    "hash": "88ffcd652573d97c4bfde30eb6dc7a30ae975a58b6d167f8cdfdfb98e5dcc2e4",
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir -Removal",
+            "Remove-Item \"$dir\\`$*\", \"$dir\\uninstallerIcon.ico\" -Force -Recurse -ErrorAction Ignore"
+        ]
+    },
+    "shortcuts": [
+        [
+            "Qoder CN.exe",
+            "Qoder CN"
+        ]
+    ],
+    "checkver": {
+        "url": "https://qoder-app.oss-cn-beijing.aliyuncs.com/qoder-app/releases/latest.yml",
+        "regex": "version:\\s*([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://qoder-app.oss-cn-beijing.aliyuncs.com/qoder-app/releases/$version/Qoder-CN-win-x64-user.exe#/dl.7z",
+        "hash": {
+            "url": "https://qoder-app.oss-cn-beijing.aliyuncs.com/qoder-app/releases/latest.yml",
+            "regex": "sha256:\\s*([a-f0-9]{64})"
+        }
+    }
+}
