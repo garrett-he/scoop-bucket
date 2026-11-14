@@ -1,0 +1,65 @@
+{
+    "##": [
+        "Ximalaya desktop client (喜马拉雅电脑版) from ximalaya.com/download.",
+        "The page's Windows button points at .../down/lite/v2?client=win&channelId=99&subChannelId=100001, which 302s to the current object on nativedl.pcdn.xmcdn.com. That object URL carries the version in its filename and is what this manifest pins, so the recorded hash stays valid.",
+        "The download is a signed PE wrapper with an NSIS-3 installer appended at offset 398848. 7-Zip detects the embedded NSIS and extracts it directly, so 'dl.7z' only needs one pass: $PLUGINSDIR, 'Uninstall 喜马拉雅.exe' and ximalaya-<version>-ia32.nsis.7z land at the root.",
+        "That inner 7z is the whole Electron app (32-bit only; there is no x64 build), so the installer script expands it into $dir and drops the NSIS stubs.",
+        "checkver.url points at robots.txt on purpose: the version comes from the script, which follows the redirect chain by hand and stops at the nativedl object, so the check never pulls the 69 MiB payload.",
+        "The vendor publishes no checksum, so autoupdate has no hash source and the Excavator recomputes the SHA-256 on update."
+    ],
+    "version": "4.0.15",
+    "description": "Audio streaming, podcast and audiobook client (喜马拉雅)",
+    "homepage": "https://www.ximalaya.com/",
+    "license": "Proprietary",
+    "notes": [
+        "The NSIS stubs ($PLUGINSDIR, 'Uninstall 喜马拉雅.exe') are dropped, so Scoop owns the uninstall.",
+        "User data and cache are written under %APPDATA%/%LOCALAPPDATA% (the app builds its paths from those variables), so nothing needs to be persisted; the empty .xmpc-cache folder in the app directory is a throwaway cache.",
+        "The bundled updater ('Update 喜马拉雅.exe') stays enabled and may update itself outside Scoop; run 'scoop install ximalaya -f' to return to the packaged build."
+    ],
+    "url": "https://nativedl.pcdn.xmcdn.com/storages/2c8e-audiofreehighqps/D8/BB/GAqhaTsOgovFACAAAATZOxLJ.exe?ct=application/octet-stream&filename=Ximalaya-4.0.15_99B_sc100001#/dl.7z",
+    "hash": "3baa385f2ba389494b76f2c45772470316aadfaa8c803b9218663a7088932033",
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\*.nsis.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir -Removal",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall *.exe\" -Force -Recurse -ErrorAction Ignore"
+        ]
+    },
+    "bin": [
+        [
+            "喜马拉雅.exe",
+            "ximalaya"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "喜马拉雅.exe",
+            "喜马拉雅"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.ximalaya.com/robots.txt",
+        "script": [
+            "$ProgressPreference = 'SilentlyContinue'",
+            "$u = 'https://www.ximalaya.com/down/lite/v2?client=win&channelId=99&subChannelId=100001'",
+            "$loc = ''",
+            "for ($i = 0; $i -lt 5; $i++) {",
+            "    $req = [System.Net.WebRequest]::Create($u)",
+            "    $req.Method = 'HEAD'",
+            "    $req.AllowAutoRedirect = $false",
+            "    $req.UserAgent = 'Scoop/1.0'",
+            "    $req.Timeout = 20000",
+            "    $res = $req.GetResponse()",
+            "    $loc = $res.Headers['Location']",
+            "    $res.Close()",
+            "    if (!$loc) { $loc = $u; break }",
+            "    if ($loc -match 'nativedl\\.pcdn\\.xmcdn\\.com') { break }",
+            "    $u = $loc",
+            "}",
+            "$loc"
+        ],
+        "regex": "(?<url>https://nativedl\\.pcdn\\.xmcdn\\.com/[^\\s\"'<>]+filename=Ximalaya-(?<version>[\\d.]+)[^\\s\"'<>]*)"
+    },
+    "autoupdate": {
+        "url": "$matchUrl#/dl.7z"
+    }
+}
