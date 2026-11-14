@@ -1,0 +1,68 @@
+{
+    "##": [
+        "Ximalaya live streaming assistant (喜马拉雅直播助手) for anchors, offered on ximalaya.com/download.",
+        "The page's 直播助手 Windows button points at .../down?from=live_win_002, which 302s twice (via .../down?from=live_pc) to the current object on nativedl.pcdn.xmcdn.com. That object URL carries the version in its filename and is what this manifest pins, so the recorded hash stays valid.",
+        "The download is a signed PE wrapper with an NSIS-3 installer appended; 7-Zip extracts it in one pass into $PLUGINSDIR\\app-64.7z plus $R0\\Uninstall 喜马拉雅直播助手.exe.",
+        "The payload is a 64-bit Electron app (only app-64.7z is shipped, there is no 32-bit build), with obs-studio-node and Zego streaming engines under resources\\app.asar.unpacked.",
+        "build\\libs\\obs-studio-node\\libobs-d3d11.dll imports msvcp140.dll/vcruntime140.dll and the installer ships VC_redist.x64.exe rather than the runtime itself, so the 2015-2022 redistributable is a declared dependency.",
+        "checkver.url points at robots.txt on purpose: the version comes from the script, which follows the redirect chain by hand and stops at the nativedl object, so the check never pulls the 241 MiB payload.",
+        "The vendor publishes no checksum, so autoupdate has no hash source and the Excavator recomputes the SHA-256 on update."
+    ],
+    "version": "4.68.1006",
+    "description": "Live streaming assistant for Ximalaya anchors (喜马拉雅直播助手)",
+    "homepage": "https://www.ximalaya.com/download/",
+    "license": "Proprietary",
+    "depends": "extras/vcredist2022",
+    "notes": [
+        "The NSIS stubs ($PLUGINSDIR, $R0 with 'Uninstall 喜马拉雅直播助手.exe') are dropped, so Scoop owns the uninstall.",
+        "User data and cache are written under %APPDATA%/%LOCALAPPDATA%, so nothing needs to be persisted.",
+        "Virtual camera and audio/video capture come from the bundled obs-studio-node and Zego engines; no system driver is registered by this package.",
+        "The bundled updater stays enabled and may update itself outside Scoop; run 'scoop install ximalaya-live -f' to return to the packaged build."
+    ],
+    "url": "https://nativedl.pcdn.xmcdn.com/storages/5c92-audiofreehighqps/57/52/GKwRIUEOErXKABAAAAStOc3W.exe?ct=application/octet-stream&filename=Ximalaya-Live-Setup-4.68.1006#/dl.7z",
+    "hash": "e497192c759a231ff1c278a5c6d7bda466e861bd6797fcf82bd1e0f4cfebf5d4",
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app-64.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir -Removal",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse -ErrorAction Ignore"
+        ]
+    },
+    "bin": [
+        [
+            "喜马拉雅直播助手.exe",
+            "ximalaya-live"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "喜马拉雅直播助手.exe",
+            "喜马拉雅直播助手"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.ximalaya.com/robots.txt",
+        "script": [
+            "$ProgressPreference = 'SilentlyContinue'",
+            "$u = 'https://www.ximalaya.com/down?from=live_win_002'",
+            "$loc = ''",
+            "for ($i = 0; $i -lt 5; $i++) {",
+            "    $req = [System.Net.WebRequest]::Create($u)",
+            "    $req.Method = 'HEAD'",
+            "    $req.AllowAutoRedirect = $false",
+            "    $req.UserAgent = 'Scoop/1.0'",
+            "    $req.Timeout = 20000",
+            "    $res = $req.GetResponse()",
+            "    $loc = $res.Headers['Location']",
+            "    $res.Close()",
+            "    if (!$loc) { $loc = $u; break }",
+            "    if ($loc -match 'nativedl\\.pcdn\\.xmcdn\\.com') { break }",
+            "    $u = $loc",
+            "}",
+            "$loc"
+        ],
+        "regex": "(?<url>https://nativedl\\.pcdn\\.xmcdn\\.com/[^\\s\"'<>]+filename=Ximalaya-Live-Setup-(?<version>[\\d.]+)[^\\s\"'<>]*)"
+    },
+    "autoupdate": {
+        "url": "$matchUrl#/dl.7z"
+    }
+}
