@@ -1,0 +1,57 @@
+{
+    "##": [
+        "Replay, the free offline AI audio tool from Weights (weights.com/replay) for voice conversion and stem separation.",
+        "The Download for Windows button is a redirect endpoint (www.weights.com/api/replay/download-url?platform=windows) that answers 302 with a presigned Cloudflare R2 URL valid for two hours, so it cannot be pinned. The app's own electron-updater uses the same bucket through updates-windows.weights.com (resources/app-update.yml: provider s3, bucket replay-updates-windows), and that host serves the object unsigned, so the manifest pins Replay-<version>-installer.exe there.",
+        "The pinned object is the published build: its SHA-512 equals the base64 sha512 in https://updates-windows.weights.com/latest.yml, and its size matches the size field (147102488).",
+        "The installer is electron-builder NSIS-3 Unicode (per-user, one-click): $PLUGINSDIR\\app-64.7z holds the whole app flat, with Replay.exe at the root, and $R0 only carries 'Uninstall Replay.exe'. The installer script expands the payload into $dir and drops both folders.",
+        "Only x64 is published; there is no 32-bit or ARM build on the download page.",
+        "checkver reads latest.yml, which the vendor regenerates with every release.",
+        "autoupdate.hash is omitted because the feed publishes only a base64 SHA-512: Scoop splits a hash on ':' and hands the remainder to Get-FileHash, which compares hex digests, so the base64 value cannot be used as is. The Excavator recomputes the SHA-256 of the 140 MiB installer on update."
+    ],
+    "version": "8.7.2",
+    "description": "Offline AI audio tool for voice conversion and stem separation",
+    "homepage": "https://www.weights.com/replay",
+    "license": "Proprietary",
+    "notes": [
+        "The NSIS stubs ($PLUGINSDIR and the bundled 'Uninstall Replay.exe') are dropped, so Scoop owns the uninstall.",
+        "Settings, recordings and the downloaded voice weights live under \"$env:APPDATA\\Replay\\<appId>\" (db.json, recordings, weights, train), and the updater cache under \"$env:LOCALAPPDATA\\replay-updater\", so nothing needs to be persisted.",
+        "The bundled electron-updater is enabled. An in-app update runs the vendor installer, which creates a per-user copy outside the Scoop app directory instead of replacing it; run 'scoop install replay -f' afterwards to return to the packaged build.",
+        "weights.com and its update hosts do not resolve to the real servers from mainland China, so downloading needs a working proxy.",
+        "Voice conversion is GPU-accelerated when an NVIDIA card is present and considerably slower on CPU alone."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://updates-windows.weights.com/Replay-8.7.2-installer.exe#/dl.7z",
+            "hash": "c0b258e73f16a82bebc1bda19e67206bbf9a64d4c1f3f79eb11af9ae7eeaaec1"
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force"
+        ]
+    },
+    "bin": [
+        [
+            "Replay.exe",
+            "replay"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Replay.exe",
+            "Replay"
+        ]
+    ],
+    "checkver": {
+        "url": "https://updates-windows.weights.com/latest.yml",
+        "regex": "version:\\s*([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://updates-windows.weights.com/Replay-$version-installer.exe#/dl.7z"
+            }
+        }
+    }
+}
