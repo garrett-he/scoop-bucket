@@ -1,0 +1,47 @@
+{
+    "##": [
+        "Official WeChat Mini Program IDE (微信开发者工具), stable channel; the vendor also publishes rc and nightly builds that this manifest deliberately ignores.",
+        "The download page renders its release data client-side from https://devtools.wxqcloud.qq.com.cn/WechatWebDev/nightly/versions/config.json, where channels[0] is the stable build and each channel's per-release notes live in logs/<channel>_v<version>.json.",
+        "The payload is an NSIS-3 Unicode installer whose file section is a flat Electron tree (微信开发者工具.exe at the root next to resources\\app.asar), so 7-Zip expands it in place. Scoop's own 7-Zip call already skips the *.nsis uninstaller stub, leaving only $PLUGINSDIR (modern-wizard.bmp and two NSIS plugins) for install.script to drop.",
+        "The CDN path carries a 32-hex release token (be1ec64cf6184b0fa64091919793f068) that is not published in the version data, so the URL goes through the vendor's stable redirect, which resolves the token from download_version; that parameter is the version with the dots stripped, i.e. Scoop's $cleanVersion.",
+        "Only Windows x64 is built for the 2.02 Electron line; the 1.06 line still shipped an ia32 installer, so there is no 32bit architecture here.",
+        "The vendor publishes no checksum, so autoupdate.hash is omitted and Excavator recomputes the SHA-256 from the download."
+    ],
+    "version": "2.02.2609250",
+    "description": "Official WeChat Mini Program IDE for developing, previewing and uploading Mini Programs and Mini Games",
+    "homepage": "https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html",
+    "license": "Proprietary",
+    "notes": [
+        "The GUI executable is \"微信开发者工具.exe\" and is shimmed as 'wechat-devtools'; 'wechat-devtools-cli' is the bundled CLI (cli.bat) used by CI for 'open', 'preview' and 'upload'.",
+        "Login state, projects and the compiler cache live under %LOCALAPPDATA%\\微信开发者工具, so nothing is persisted by Scoop.",
+        "The IDE ships its own updater and will offer to restart into a newer build. Decline it and run 'scoop update wechat-devtools' instead, otherwise the vendor installer replaces files inside the Scoop app directory."
+    ],
+    "url": "https://servicewechat.com/wxa-dev-logic/download_redirect?type=x64&from=mpwiki&download_version=2022609250&version_type=1#/dl.7z",
+    "hash": "6af4acb487883f4335206171e13b9b42a27ba2b8434ee3fe83a5f43d5d49f9b8",
+    "installer": {
+        "script": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force"
+    },
+    "bin": [
+        [
+            "微信开发者工具.exe",
+            "wechat-devtools"
+        ],
+        [
+            "cli.bat",
+            "wechat-devtools-cli"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "微信开发者工具.exe",
+            "WeChat DevTools"
+        ]
+    ],
+    "checkver": {
+        "url": "https://devtools.wxqcloud.qq.com.cn/WechatWebDev/nightly/versions/config.json",
+        "jsonpath": "$.channels[0].version"
+    },
+    "autoupdate": {
+        "url": "https://servicewechat.com/wxa-dev-logic/download_redirect?type=x64&from=mpwiki&download_version=$cleanVersion&version_type=1#/dl.7z"
+    }
+}
