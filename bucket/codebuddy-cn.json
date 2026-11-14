@@ -1,0 +1,49 @@
+{
+    "##": [
+        "China edition of CodeBuddy IDE, the AI code editor from Tencent Cloud. It is a VS Code fork (product.json: applicationName \"buddycn\", dataFolderName \".codebuddycn\"), not the WorkBuddy desktop (workbuddy-cn in this bucket) shown on the same site's /work page.",
+        "The vendor API only serves the win32-x64-user package (platform token \"ide-win32-x64-user\"; ide-win32-x64 and ide-win32-arm64 are rejected as invalid), so the manifest is 64-bit only.",
+        "The file name embeds a build id that cannot be derived from the version (4.12.4.43368774 -> 62ef1801), so checkver captures it as the named group build and autoupdate rebuilds the URL with $matchBuild.",
+        "The 157 MiB Inno Setup 6.7 installer drops its payload in a custom {code_GetDestDir} folder, so extract_dir selects it; that also leaves behind the {app}\\tools inno_updater.exe and vcruntime140.dll updater helpers, which Scoop does not need.",
+        "autoupdate.hash reads sha256hash from the same JSON endpoint, so Excavator never downloads the installer to refresh the hash.",
+        "Electron links the C runtime statically and the payload ships no vcredist DLLs, so there is no dependency to declare."
+    ],
+    "version": "4.12.4.43368774",
+    "description": "AI code editor from Tencent Cloud, China edition",
+    "homepage": "https://www.codebuddy.cn/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.codebuddy.cn/document/term"
+    },
+    "notes": [
+        "The GUI executable is \"CodeBuddy CN.exe\"; the CLI wrapper in bin\\ is exposed as 'codebuddy'.",
+        "Settings and extensions live in %APPDATA%\\.codebuddycn, so nothing is persisted by Scoop.",
+        "The inno_updater helper is not installed with the package, so in-app updates fail by design; upgrade through Scoop instead."
+    ],
+    "url": "https://download.codebuddy.cn/aiide/win32-x64-user/CodeBuddy-win32-x64-user-4.12.4.43368774-62ef1801-cn.exe",
+    "hash": "849dc688336da8d79f12faef59fedc12a29935ecd922bdadb53e7591b4c9e3c9",
+    "innosetup": true,
+    "extract_dir": "{code_GetDestDir}",
+    "bin": [
+        [
+            "bin\\buddycn.cmd",
+            "codebuddy"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "CodeBuddy CN.exe",
+            "CodeBuddy"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.codebuddy.cn/v2/update?platform=ide-win32-x64-user",
+        "regex": "CodeBuddy-win32-x64-user-(?<version>[\\d.]+)-(?<build>[0-9a-f]+)-cn\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://download.codebuddy.cn/aiide/win32-x64-user/CodeBuddy-win32-x64-user-$version-$matchBuild-cn.exe",
+        "hash": {
+            "url": "https://www.codebuddy.cn/v2/update?platform=ide-win32-x64-user",
+            "jp": "$.sha256hash"
+        }
+    }
+}
