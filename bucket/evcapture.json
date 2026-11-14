@@ -19,13 +19,13 @@
     "bin": [
         [
             "EVCapture.exe",
-            "evcapture"
+            "evcap"
         ]
     ],
     "shortcuts": [
         [
             "EVCapture.exe",
-            "EV录屏"
+            "EVCapture"
         ]
     ],
     "checkver": {

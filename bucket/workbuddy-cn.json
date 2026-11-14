@@ -21,6 +21,12 @@
             "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse -ErrorAction Ignore"
         ]
     },
+    "bin": [
+        [
+            "WorkBuddy.exe",
+            "workbuddy"
+        ]
+    ],
     "shortcuts": [
         [
             "WorkBuddy.exe",

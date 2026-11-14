@@ -21,13 +21,13 @@
     "bin": [
         [
             "bin\\trae-cn.cmd",
-            "trae-cn"
+            "trae"
         ]
     ],
     "shortcuts": [
         [
             "Trae CN.exe",
-            "Trae CN"
+            "TRAE"
         ]
     ],
     "checkver": {

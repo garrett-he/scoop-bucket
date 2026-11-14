@@ -10,7 +10,12 @@
     "notes": "INI configuration files in the install directory are kept across updates.",
     "url": "https://github.com/mrfearless/RadASM2/blob/master/Release/RadASM-2.2.2.4-FullPackage.zip?raw=true",
     "hash": "e70ddcda2f4dce8e642bd9ce7e1af4248ef7584180a5e7fec182438f0aa497c9",
-    "bin": "RadASM.exe",
+    "bin": [
+        [
+            "RadASM.exe",
+            "radasm"
+        ]
+    ],
     "shortcuts": [
         [
             "RadASM.exe",

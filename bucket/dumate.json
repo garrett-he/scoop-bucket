@@ -23,6 +23,12 @@
             "Remove-Item \"$dir\\`$*\" -Force -Recurse -ErrorAction Ignore"
         ]
     },
+    "bin": [
+        [
+            "DuMate.exe",
+            "dumate"
+        ]
+    ],
     "shortcuts": [
         [
             "DuMate.exe",

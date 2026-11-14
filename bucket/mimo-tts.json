@@ -15,12 +15,6 @@
             "mimo-tts"
         ]
     ],
-    "shortcuts": [
-        [
-            "mimo-tts.exe",
-            "Mimo TTS"
-        ]
-    ],
     "checkver": "github",
     "autoupdate": {
         "architecture": {

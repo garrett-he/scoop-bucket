@@ -29,10 +29,16 @@
             "Get-ChildItem $dir -Directory | Where-Object { $_.Name -match '^\\d+(\\.\\d+)+\\.\\d+$' } | ForEach-Object { Remove-Item $_.FullName -Recurse -Force }"
         ]
     },
+    "bin": [
+        [
+            "直播伴侣.exe",
+            "streaming-tool"
+        ]
+    ],
     "shortcuts": [
         [
             "直播伴侣.exe",
-            "直播伴侣"
+            "Streaming Tool"
         ]
     ],
     "checkver": {

@@ -18,16 +18,10 @@
         "Remove-Item -Path \"$dir\\`$PLUGINSDIR\", \"$dir\\`$TEMP\", \"$dir\\`$WINDIR\" -Recurse -Force -ErrorAction SilentlyContinue",
         "Remove-Item -Path \"$dir\\WeMeetApp_new.exe\" -Force -ErrorAction SilentlyContinue"
     ],
-    "bin": [
-        [
-            "WeMeetApp.exe",
-            "wemeet"
-        ]
-    ],
     "shortcuts": [
         [
             "WeMeetApp.exe",
-            "腾讯会议"
+            "Tencent Meeting"
         ]
     ],
     "checkver": {

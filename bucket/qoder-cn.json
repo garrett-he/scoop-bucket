@@ -22,10 +22,16 @@
             "Remove-Item \"$dir\\`$*\", \"$dir\\uninstallerIcon.ico\" -Force -Recurse -ErrorAction Ignore"
         ]
     },
+    "bin": [
+        [
+            "Qoder CN.exe",
+            "qoder"
+        ]
+    ],
     "shortcuts": [
         [
             "Qoder CN.exe",
-            "Qoder CN"
+            "Qoder"
         ]
     ],
     "checkver": {
