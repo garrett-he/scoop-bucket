@@ -1,0 +1,39 @@
+{
+    "##": [
+        "Baidu DuMate desktop assistant (dumate.cn).",
+        "The link published on the site (.../win-artifacts/Dumate-win-setup-x64-latest.exe) is a moving alias; this manifest uses the versioned copy from the electron-updater feed (.../artifacts-update/DuMate-Setup-<version>-x64.exe). Both are the same object (identical size and BOS CRC32/CRC32C/CRC64), but only the versioned path keeps a recorded hash valid.",
+        "Version is read from that feed's latest.yml. It publishes sha512 only, so autoupdate.hash is omitted and the 744 MiB installer is re-downloaded on update to compute the SHA-256.",
+        "The NSIS installer embeds the app as $PLUGINSDIR\\app-64.7z; the installer script expands it into $dir, which produces the flat Electron layout with DuMate.exe at the root.",
+        "The bundled electron-updater stays enabled and points at the same feed, so the app may update itself outside Scoop."
+    ],
+    "version": "1.0.92",
+    "description": "AI assistant that automates cross-app and cross-file office tasks (Baidu DuMate)",
+    "homepage": "https://www.dumate.cn/",
+    "license": "Proprietary",
+    "notes": [
+        "The installer stubs ($PLUGINSDIR, $R0 uninstaller) are dropped, so Scoop owns the uninstall.",
+        "User data is written outside the app directory, so nothing needs to be persisted.",
+        "Run 'scoop install dumate -f' to return to the packaged version after an in-app update."
+    ],
+    "url": "https://dumate-app-public.cdn.bcebos.com/release-info/artifacts-update/DuMate-Setup-1.0.92-x64.exe#/dl.7z",
+    "hash": "5713f10e9a40f404df636fed8c655b0262b9ed46140f2dcd278fd32b15d95d05",
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir -Removal",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse -ErrorAction Ignore"
+        ]
+    },
+    "shortcuts": [
+        [
+            "DuMate.exe",
+            "DuMate"
+        ]
+    ],
+    "checkver": {
+        "url": "https://dumate-app-public.cdn.bcebos.com/release-info/artifacts-update/latest.yml",
+        "regex": "version:\\s*(?<version>[\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://dumate-app-public.cdn.bcebos.com/release-info/artifacts-update/DuMate-Setup-$version-x64.exe#/dl.7z"
+    }
+}
