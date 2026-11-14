@@ -1,0 +1,55 @@
+{
+    "##": [
+        "NetEase Cloud Music desktop client from music.163.com.",
+        "The stable link https://music.163.com/download/pc/latest is a 302 to d8.music.126.net/dmusic2/NeteaseCloudMusic_Music_official_<version>_64.exe. This manifest pins that versioned file so the recorded hash stays valid; the alias is only used by checkver.",
+        "The redirect picks 32/64-bit from the user agent (it hands out ..._32.exe to PowerShell), so checkver accepts either suffix and reads the version only.",
+        "checkver.url points at robots.txt on purpose: the version comes from the script, and the download page declares charset=utf8, which the .NET reader Scoop uses cannot resolve.",
+        "The CDN answers 403 to the default curl agent but serves Scoop's WebClient, so no useragent override is needed.",
+        "The NSIS payload keeps the whole client in redist_packages\\; the installer script merges it into $dir, where locales/, package/, resource/ and swiftshader/ already sit. That merged layout is what the client expects - extracting redist_packages as-is leaves the exe one level too deep.",
+        "Only the x64 build is packaged; ..._32.exe is a separate artifact."
+    ],
+    "version": "3.1.43.205627",
+    "description": "Music streaming client (NetEase Cloud Music)",
+    "homepage": "https://music.163.com/",
+    "license": "Proprietary",
+    "notes": [
+        "The installer stub (UnInstall.exe, $PLUGINSDIR) is dropped, so Scoop owns the uninstall.",
+        "User data, cache and downloaded music live under \"$env:LOCALAPPDATA\\Netease\\CloudMusic\", so nothing needs to be persisted."
+    ],
+    "url": "https://d8.music.126.net/dmusic2/NeteaseCloudMusic_Music_official_3.1.43.205627_64.exe#/dl.7z",
+    "hash": "f8ce38219e97bab97f36cb1dcfdaf794bff404646e4928d5b4404a9bc248cbe1",
+    "installer": {
+        "script": [
+            "Get-ChildItem -Path \"$dir\\redist_packages\" -Force | Move-Item -Destination $dir -Force",
+            "Remove-Item \"$dir\\redist_packages\", \"$dir\\`$PLUGINSDIR\", \"$dir\\UnInstall.exe\" -Recurse -Force -ErrorAction Ignore"
+        ]
+    },
+    "bin": [
+        [
+            "cloudmusic.exe",
+            "cloudmusic"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "cloudmusic.exe",
+            "网易云音乐"
+        ]
+    ],
+    "checkver": {
+        "url": "https://music.163.com/robots.txt",
+        "script": [
+            "$req = [System.Net.WebRequest]::Create('https://music.163.com/download/pc/latest')",
+            "$req.Method = 'HEAD'",
+            "$req.AllowAutoRedirect = $true",
+            "$req.Timeout = 20000",
+            "$resp = $req.GetResponse()",
+            "$resp.ResponseUri.AbsoluteUri",
+            "$resp.Close()"
+        ],
+        "regex": "(?<version>[\\d.]+)_(?:32|64)\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://d8.music.126.net/dmusic2/NeteaseCloudMusic_Music_official_$version_64.exe#/dl.7z"
+    }
+}
