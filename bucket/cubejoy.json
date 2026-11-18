@@ -1,0 +1,35 @@
+{
+    "##": [
+        "The green/portable ZIP is a flat launcher tree with Cube.exe at the root; the accompanying CubeSetup.exe is a real GUI installer, so the portable ZIP is packaged instead.",
+        "The vendor exposes no working JSON endpoint for downloads (the JSONP URL on cubeDownload.html returns 502), so checkver reads the version from the portable filename on the official download page.",
+        "Cube.exe is a 32-bit bootstrapper, but the vendor states Windows 7 64-bit or later and the bundled Electron UI is 64-bit; a single top-level url/hash therefore covers the only supported architecture.",
+        "The vendor publishes no checksum, so autoupdate.hash is omitted and Scoop recomputes SHA-256 by downloading the ZIP on version bumps.",
+        "Login state and settings are written under %LOCALAPPDATA%\\Cube and Electron's userData under %APPDATA%, not into the app directory, so no persist entry is needed."
+    ],
+    "version": "4.1.2.1",
+    "description": "Cube Game platform client for buying, downloading and launching PC games",
+    "homepage": "https://www.cubejoy.com/",
+    "license": "Proprietary",
+    "notes": "Requires Windows 7 64-bit or later. Game files and account data live outside the Scoop app directory.",
+    "url": "https://download.cubejoy.com/app/4.1.2.1/cube_cn_v4.1.2.1.zip",
+    "hash": "b512a99f32b5e5338b7896ee4a2324b8da18a94ff1d9743151e02e929152372e",
+    "bin": [
+        [
+            "Cube.exe",
+            "cubejoy"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Cube.exe",
+            "方块游戏"
+        ]
+    ],
+    "checkver": {
+        "url": "https://app.cubejoy.com/download.html",
+        "regex": "cube_cn_v(?<version>[\\d.]+)\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://download.cubejoy.com/app/$version/cube_cn_v$version.zip"
+    }
+}
