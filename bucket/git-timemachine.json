@@ -1,0 +1,30 @@
+{
+    "##": [
+        "The only Windows asset is named win_x86, but its PE header is AMD64 and the binary reports version 3.2.0 when run; a single top-level url/hash therefore covers Windows.",
+        "The pinned hash matches both the local SHA-256 of the downloaded ZIP and the digest on the GitHub release asset. autoupdate.hash is omitted so Excavator reads the asset digest directly.",
+        "Settings and state are written to ~/.git-timemachine/, not into the app directory, so no persist entry is needed. The CLI shells out to git commit, hence the git dependency."
+    ],
+    "version": "3.2.0",
+    "description": "Record Git commits at arbitrary timestamps with jitter and daily limits",
+    "homepage": "https://github.com/garrett-he/git-timemachine",
+    "license": "MIT",
+    "depends": "git",
+    "notes": [
+        "Configuration and state live in \"~/.git-timemachine/\" and survive Scoop upgrades.",
+        "The retime command rewrites history in place; it creates a <branch>-gtm-backup branch before starting."
+    ],
+    "url": "https://github.com/garrett-he/git-timemachine/releases/download/3.2.0/git-timemachine-3.2.0-win_x86.zip",
+    "hash": "80a6d59b0865e4fccc75a2fd47577f3c7a855222f506144de0a543567e5aac2b",
+    "bin": [
+        [
+            "git-timemachine.exe",
+            "git-timemachine"
+        ]
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/garrett-he/git-timemachine/releases/latest"
+    },
+    "autoupdate": {
+        "url": "https://github.com/garrett-he/git-timemachine/releases/download/$version/git-timemachine-$version-win_x86.zip"
+    }
+}
