@@ -19,7 +19,8 @@ is the source of truth; default branch is `master`.
   SHA-256 locally or verify a published checksum.
 - Every manifest needs `checkver` and `autoupdate` — Excavator depends on them.
 - Record non-obvious decisions in the manifest's `##` field, not outside it.
-- One manifest per commit; Conventional Commits with a body; native `git` (no
+- One manifest per commit; Conventional Commits with a body and the manifest
+  name as scope (e.g. `feat(flclash): add flclash manifest`); native `git` (no
   commit-wrapping tool); no AI signatures or co-author lines.
 - Keep the skill generic. Do not add app names, vendor URLs or version numbers
   to `skills/scoop-bucket/`; read `bucket/*.json` for concrete examples.
