@@ -6,7 +6,7 @@
         "The NSIS installer only wraps a single $_41_\\app.7z; the installer script expands it into $dir, which yields the flat layout the app shell expects, with \"直播伴侣.exe\" at the root.",
         "The app is x64 only; the 11.3.3 x86 build is the last 32-bit release and is a different version, so there is no 32bit architecture block."
     ],
-    "version": "13.2.4",
+    "version": "13.3.5",
     "description": "Douyin live streaming companion",
     "homepage": "https://streamingtool.douyin.com/",
     "license": "Proprietary",
@@ -18,8 +18,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://lf6-cdn-tos.douyinstatic.com/obj/venus/StreamingTool-13.2.4-x64.exe#/dl.7z",
-            "hash": "a623aae9f402d14dafc38962b0ef1aa1fa6ffa9d3c36d91d882809916be4d662"
+            "url": "https://lf6-cdn-tos.douyinstatic.com/obj/venus/StreamingTool-13.3.5-x64.exe#/dl.7z",
+            "hash": "cd8c59735fad840bf6db33b6ea31527b46864bd5169d23e20d134e2132bf020d"
         }
     },
     "installer": {
