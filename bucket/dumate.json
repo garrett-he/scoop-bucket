@@ -6,7 +6,7 @@
         "The NSIS installer embeds the app as $PLUGINSDIR\\app-64.7z; the installer script expands it into $dir, which produces the flat Electron layout with DuMate.exe at the root.",
         "The bundled electron-updater stays enabled and points at the same feed, so the app may update itself outside Scoop."
     ],
-    "version": "1.0.92",
+    "version": "1.0.93",
     "description": "AI assistant that automates cross-app and cross-file office tasks (Baidu DuMate)",
     "homepage": "https://www.dumate.cn/",
     "license": "Proprietary",
@@ -15,8 +15,8 @@
         "User data is written outside the app directory, so nothing needs to be persisted.",
         "Run 'scoop install dumate -f' to return to the packaged version after an in-app update."
     ],
-    "url": "https://dumate-app-public.cdn.bcebos.com/release-info/artifacts-update/DuMate-Setup-1.0.92-x64.exe#/dl.7z",
-    "hash": "5713f10e9a40f404df636fed8c655b0262b9ed46140f2dcd278fd32b15d95d05",
+    "url": "https://dumate-app-public.cdn.bcebos.com/release-info/artifacts-update/DuMate-Setup-1.0.93-x64.exe#/dl.7z",
+    "hash": "4b337f6a9b14904b81b891224f86179f3a09d8f9268f876deeb1a4ca6ce556f6",
     "installer": {
         "script": [
             "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir -Removal",
