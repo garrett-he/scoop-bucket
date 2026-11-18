@@ -7,7 +7,7 @@
         "The NSIS installer is a plain payload (no embedded app-*.7z): the Flutter app already sits at the archive root with Xijing.exe, its plugin DLLs and data\\ beside it. Only $PLUGINSDIR and Uninstall.exe are dropped.",
         "Xijing.exe imports msvcp140.dll/vcruntime140.dll and the installer ships VcRedistInstaller.exe instead of the runtime itself, so the 2015-2022 redistributable is a declared dependency."
     ],
-    "version": "1.2.6",
+    "version": "1.2.7",
     "description": "Voice role-play and dubbing community client",
     "homepage": "https://www.aipiaxi.com/",
     "license": "Proprietary",
@@ -17,8 +17,8 @@
         "User data, cache and logs are written under %APPDATA% and %LOCALAPPDATA%, so nothing needs to be persisted.",
         "The bundled updater stays enabled and may prompt to update outside Scoop; run 'scoop install xijing -f' to return to the packaged build."
     ],
-    "url": "https://static.aipiaxi.com/app/pc-new/windows/stable/Xijing-Setup-1.2.6.exe#/dl.7z",
-    "hash": "16a60859f9d43fe34e5340199fa858d8d2405fc441ea093b8dfd8c7a24612288",
+    "url": "https://static.aipiaxi.com/app/pc-new/windows/stable/Xijing-Setup-1.2.7.exe#/dl.7z",
+    "hash": "041017b2e3d55c14d4b46198ed9088369a641fe9ab66814f3b76572818023857",
     "installer": {
         "script": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe\" -Force -Recurse -ErrorAction Ignore"
     },
