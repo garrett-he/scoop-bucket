@@ -8,7 +8,7 @@
         "checkver reads latest.yml, which the vendor regenerates on every release and serves with 'Cache-Control: max-age=0'.",
         "autoupdate.hash pulls the base64 sha512 out of latest.yml through the $base64 template; Scoop decodes it to hex, and the decoded value matches the local SHA-512 of Setup.exe. Because the feed only publishes SHA-512, an auto-updated manifest carries a 'sha512:' digest while this initial one keeps the usual SHA-256."
     ],
-    "version": "1.1.5",
+    "version": "1.1.7",
     "description": "AI coding desktop client with local project spaces, skills and MCP app connections",
     "homepage": "https://agnes-ai.com/agnescode",
     "license": "Proprietary",
@@ -19,7 +19,7 @@
         "The download is 444 MiB and unpacks to about 1.7 GB, because resources\\bin carries its own Node, uv and the agnesd daemon."
     ],
     "url": "https://cos-agnes-code.agnes-ai.cn/release/latest/AgnesCode-Setup.exe#/dl.7z",
-    "hash": "sha512:7bdd498623c3cdb17bb223d8f3fc3e34458a8c1ee55c9b0a6ca46fc97631f1bba7e484742c79ebbca7b6e477079055cb8ad3f5dac2be261b822b8d4eec54239e",
+    "hash": "sha512:b3ba89d446c4c939e7165c31bb47b361b8fb0e388a481e0283bddf2378a66e6d6b063f9d6ad78755c444d46ad070b5b033650f3e485d918a3d97437ee4ba50e7",
     "installer": {
         "script": [
             "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
