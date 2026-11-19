@@ -8,7 +8,7 @@
         "The installer is an NSIS-3 Unicode 32-bit stub around $PLUGINSDIR\\app-64.7z; the installer script expands that inner archive into $dir and drops the NSIS leftovers ($PLUGINSDIR, the $R6 data blocks, 'Uninstall QwenWorkCN.exe' and uninstallerIcon.ico). The unpacked layout is flat, with QwenWorkCN.exe at the root.",
         "Only the x64 build is packaged. The arm64 installer at the same path still served the 2026-11-10 payload while x64 had already moved to the 2026-11-13 one, and a single manifest cannot give the two architectures different versions."
     ],
-    "version": "2.1.0.26111801",
+    "version": "2.1.0.26111906",
     "description": "AI office assistant for documents, slides, spreadsheets and web deliverables (千问办公)",
     "homepage": "https://qwenwork.cn/",
     "license": "Proprietary",
@@ -19,7 +19,7 @@
         "The 402 MiB download unpacks to roughly 1.5 GiB in 7320 files, most of it the bundled agent runtimes, skills and Electron payload."
     ],
     "url": "https://assets.qwenwork.cn/release/latest/qwenworkcn-setup-x64.exe#/dl.7z",
-    "hash": "156305a48559d7317edfefb493cc67637852aac6b798d34fc66fcaba3aad79d6",
+    "hash": "55f98707afcefe4ebea2b86a8061de968bbccc55534066dee64af58baa943453",
     "installer": {
         "script": [
             "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
