@@ -6,7 +6,7 @@
         "The 467 MiB Inno Setup installer is unpacked with innounp; the payload lives in the {code_GetDestDir} folder, so extract_dir selects it and the {app}\\tools installer helpers are dropped.",
         "The vendor publishes no checksums, so autoupdate.hash is omitted and Excavator downloads the installer to refresh the hash."
     ],
-    "version": "2.3.103559",
+    "version": "2.3.105403",
     "description": "AI-powered IDE from ByteDance, China edition",
     "homepage": "https://www.trae.cn/",
     "license": "Proprietary",
@@ -14,8 +14,8 @@
         "Settings and extensions live outside the install directory (product.json sets dataFolderName to \".trae-cn\"), so nothing is persisted by Scoop.",
         "The GUI executable is \"Trae CN.exe\"; the CLI wrapper is exposed as 'trae-cn'."
     ],
-    "url": "https://lf-cdn.trae.com.cn/obj/trae-com-cn/pkg/app/releases/stable/2.3.103559/win32/TRAE_CN-Setup-x64.exe",
-    "hash": "6b9403f11a0f9a798e064d756b60c10de84dc121a21f625d60e483cfdeb2ef94",
+    "url": "https://lf-cdn.trae.com.cn/obj/trae-com-cn/pkg/app/releases/stable/2.3.105403/win32/TRAE_CN-Setup-x64.exe",
+    "hash": "38d8593c8c5666db9ac06213f8d032b034d4fe6804b631954f7afbbdd57f6dcb",
     "innosetup": true,
     "extract_dir": "{code_GetDestDir}",
     "bin": [
