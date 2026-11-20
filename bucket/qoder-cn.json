@@ -8,7 +8,7 @@
         "Since 0.5.11 Qoder ships a Windows Launcher: on startup PZx() reads %LOCALAPPDATA%\\Qoder CN\\Qoder CN Launcher\\state.ini and aborts with WINDOWS_LAUNCHER_STATE_MISSING when it is absent. The NSIS installer writes it through QoderInstallerHelper.exe, which unpacking app-64.7z skips entirely. Verified unchanged in 0.5.12: cg() parses flat key=value lines and vrx() only checks installDir/appExecutable.",
         "post_install recreates that state file as a flat key=value ini. $dir at post_install time is the 'current' junction returned by link_current, so installDir matches process.execPath of the shim and the app's vrx()/BB()/bl0() checks resolve appExecutable back to the running exe."
     ],
-    "version": "0.5.14",
+    "version": "0.5.17",
     "description": "Agent workbench for human and AI software teams (China edition)",
     "homepage": "https://qoder.com.cn/",
     "license": "Proprietary",
@@ -17,8 +17,8 @@
         "Startup requires \"$env:LOCALAPPDATA\\Qoder CN\\Qoder CN Launcher\\state.ini\", which this manifest creates during install. If it is deleted, run 'scoop reinstall qoder-cn'.",
         "The bundled electron-updater stays enabled and downloads updates into \"$env:LOCALAPPDATA\\qoder-cn-updater\". Prefer 'scoop update qoder-cn' so the launcher state keeps matching the app directory."
     ],
-    "url": "https://qoder-app.oss-cn-beijing.aliyuncs.com/qoder-app/releases/0.5.14/Qoder-CN-win-x64-user.exe#/dl.7z",
-    "hash": "33607884536178c80601054df38ea00de0125a56196344de288e577034fc8df8",
+    "url": "https://qoder-app.oss-cn-beijing.aliyuncs.com/qoder-app/releases/0.5.17/Qoder-CN-win-x64-user.exe#/dl.7z",
+    "hash": "ba4c40d53a27f5c1fc6c93559096cb7149b5a1847588c36b6ccd73396894d837",
     "installer": {
         "script": [
             "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir -Removal",
