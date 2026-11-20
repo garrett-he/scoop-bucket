@@ -7,7 +7,7 @@
         "Only win32-x64 is published for Windows.",
         "autoupdate.hash reads winget's InstallerSha256 from the same version folder, so a bump costs no 340 MiB download; the pinned hash equals both that value and the local SHA-256 of the 26.1113.130848 build."
     ],
-    "version": "26.1116.161705",
+    "version": "26.1120.201429",
     "description": "Xiaomi MiMo desktop client for writing, slides, spreadsheets, scheduled tasks and coding",
     "homepage": "https://mimo.xiaomimimo.com/desktop/",
     "license": "Proprietary",
@@ -17,8 +17,8 @@
         "The bundled updater stays enabled. An in-app update runs the vendor installer, which installs a per-user copy outside the Scoop app directory instead of replacing it; run 'scoop install mimo-desktop -f' afterwards to return to the packaged build.",
         "Because the installer is unpacked rather than executed, the xiaomi-mimo:// protocol handler the vendor registers is not created."
     ],
-    "url": "https://mimocode-cdn.xiaomimimo.com/mimocode/mimodesktop/XiaomiMiMo-26.1116.161705-x64-setup.exe#/dl.7z",
-    "hash": "fc9fce4b968914353f2798fafc62fd633e6d54b47fe3121f5c5473513bb3756f",
+    "url": "https://mimocode-cdn.xiaomimimo.com/mimocode/mimodesktop/XiaomiMiMo-26.1120.201429-x64-setup.exe#/dl.7z",
+    "hash": "ca5ee2c211eda8edd2a9771663a5e1915da0fc7aa0776addecfc04a8ba681e5b",
     "installer": {
         "script": [
             "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
