@@ -9,7 +9,7 @@
     "##": [
         "Both builds are served by the same version dir and NSIS layout; the 32-bit client nags the user to switch to x64, so 64bit is the primary entry and 32bit is kept for Windows 10 x86.",
         "The sourceforge.net fragment marker makes Scoop skip its Referer header; the CDN rejects same-origin Referers.",
-        "post_install repoints the shortcut at the real version dir instead of Scoop's 'current' junction: when WeMeetApp.exe is started through the junction path, its bundled Chromium cannot create child processes (network service dies instantly, restarts ~10x/s, login webview flashes) - the real path works fine.",
+        "post_install repoints the shortcut at the real version dir instead of Scoop's 'current' junction: when WeMeetApp.exe is started through the junction path, its bundled Chromium cannot create child processes (network service dies instantly, restarts ~10x/s, login webview flashes) - the real path works fine. The .lnk name in post_install must match the shortcuts entry (腾讯会议.lnk) or the repoint silently no-ops.",
         "checkver matches the 32bit entry first, then the 64bit one, because a single query returns both and each CDN path embeds its own md5."
     ],
     "notes": [
@@ -30,7 +30,7 @@
     "post_install": [
         "Remove-Item -Path \"$dir\\`$PLUGINSDIR\", \"$dir\\`$TEMP\", \"$dir\\`$WINDIR\" -Recurse -Force -ErrorAction SilentlyContinue",
         "Remove-Item -Path \"$dir\\WeMeetApp_new.exe\" -Force -ErrorAction SilentlyContinue",
-        "$realDir = Join-Path (Split-Path $dir -Parent) $version; if (-not (Test-Path \"$realDir\\WeMeetApp.exe\")) { $t = (Get-Item $dir -Force).Target; if ($t) { $realDir = @($t)[0] } }; $locs = @(\"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Scoop Apps\", \"$env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Scoop Apps\"); foreach ($loc in $locs) { $lnkPath = Join-Path $loc \"Tencent Meeting.lnk\"; if (Test-Path $lnkPath) { $sh = New-Object -ComObject WScript.Shell; $sc = $sh.CreateShortcut($lnkPath); $sc.TargetPath = \"$realDir\\WeMeetApp.exe\"; $sc.WorkingDirectory = $realDir; $sc.Save() } }"
+        "$realDir = Join-Path (Split-Path $dir -Parent) $version; if (-not (Test-Path \"$realDir\\WeMeetApp.exe\")) { $t = (Get-Item $dir -Force).Target; if ($t) { $realDir = @($t)[0] } }; $locs = @(\"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Scoop Apps\", \"$env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Scoop Apps\"); foreach ($loc in $locs) { $lnkPath = Join-Path $loc \"腾讯会议.lnk\"; if (Test-Path $lnkPath) { $sh = New-Object -ComObject WScript.Shell; $sc = $sh.CreateShortcut($lnkPath); $sc.TargetPath = \"$realDir\\WeMeetApp.exe\"; $sc.WorkingDirectory = $realDir; $sc.Save() } }"
     ],
     "bin": [
         [
