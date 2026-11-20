@@ -8,7 +8,7 @@
         "Only win-x64 is published for Windows; the downloads page lists the ARM64 build as 'coming soon' and the release carries no such asset.",
         "checkver uses the GitHub API, which returns tag_name v1.2.23 for the version group. autoupdate.hash is omitted on purpose, so Scoop reads the sha256 digest that the same API publishes for each asset."
     ],
-    "version": "1.2.23",
+    "version": "1.2.24",
     "description": "Agentic design canvas for building interfaces with AI agents",
     "homepage": "https://www.pen.dev/",
     "license": "Proprietary",
@@ -18,8 +18,8 @@
         "The bundled electron-updater stays enabled and pulls builds from highagency/pen-desktop-releases. An in-app update runs the vendor installer, which installs a per-user copy outside the Scoop app directory instead of replacing it; run 'scoop install pen -f' afterwards to return to the packaged build.",
         "The 428 MiB download unpacks to about 1.5 GB, because resources\\app.asar.unpacked bundles the Claude Agent SDK, the OpenAI Codex CLI, Cursor tooling and a local MCP server for agent connections."
     ],
-    "url": "https://github.com/highagency/pen-desktop-releases/releases/download/v1.2.23/Pen-1.2.23-win-x64.exe#/dl.7z",
-    "hash": "0da01b60229f82176c5ceb2730f9c84bd3f70407e344ff2b1e4cc85126bd3ccf",
+    "url": "https://github.com/highagency/pen-desktop-releases/releases/download/v1.2.24/Pen-1.2.24-win-x64.exe#/dl.7z",
+    "hash": "28a26bd926f58eb387d61a5904b2e3fd84b543c4d47e7004647667e4f3e80fa5",
     "installer": {
         "script": [
             "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
