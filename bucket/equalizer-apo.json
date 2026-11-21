@@ -1,0 +1,100 @@
+{
+    "version": "1.4.2",
+    "description": "System-wide parametric/graphic equalizer implemented as an Audio Processing Object (APO)",
+    "homepage": "https://sourceforge.net/projects/equalizerapo/",
+    "license": "GPL-2.0",
+    "##": [
+        "The official binaries live on SourceForge; equalizerapo.com is an unofficial guide that links back to the same files.",
+        "The installers are NSIS-3 with the payload embedded directly (no nested app-*.7z). Appending #/dl.7z makes Scoop unpack instead of execute the setup; the result is flat with Editor.exe, DeviceSelector.exe, EqualizerAPO.dll, config/ and qt/, plus $PLUGINSDIR and Uninstall.exe, which post_install removes.",
+        "Equalizer APO is a system APO: the vendor setup writes HKLM\\SOFTWARE\\EqualizerAPO (InstallPath and ConfigPath), sets DisableProtectedAudioDG, registers EqualizerAPO.dll with regsvr32 and launches DeviceSelector. Extraction alone leaves the APO unregistered and with no config path, and the APO DLL reads ConfigPath from HKLM only.",
+        "Registration is therefore opt-in: installer.script writes register-apo.ps1 into the app dir instead of prompting for UAC during unattended installs; the script self-elevates, performs the registry/registration steps and opens the Device Selector.",
+        "config and VSTPlugins live inside the install directory (the APO reads ConfigPath and the VST default path from InstallPath), so both are persisted.",
+        "autoupdate.hash is omitted: SourceForge publishes MD5 in its RSS feed but no SHA-256, so Excavator downloads the ~12 MiB installer to recompute it.",
+        "All three published architectures use the same flat layout; the SHA-256 values were computed locally and the files matched the MD5 values in the SourceForge RSS feed."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://sourceforge.net/projects/equalizerapo/files/1.4.2/EqualizerAPO-x64-1.4.2.exe#/dl.7z",
+            "hash": "7403be7427bbe1936a40dded082829b6e217fc4f5990fee5cba501f0ae055afa"
+        },
+        "32bit": {
+            "url": "https://sourceforge.net/projects/equalizerapo/files/1.4.2/EqualizerAPO-x86-1.4.2.exe#/dl.7z",
+            "hash": "15bdaba028b8a7805e17805e4596c27ab240381b5d5044cf247fa80717341b35"
+        },
+        "arm64": {
+            "url": "https://sourceforge.net/projects/equalizerapo/files/1.4.2/EqualizerAPO-ARM64-1.4.2.exe#/dl.7z",
+            "hash": "0dbfc64dee60f94cf77b297feb1f54d2633d49669bb474086fffb8db23e8f066"
+        }
+    },
+    "installer": {
+        "script": [
+            "$script = @'",
+            "param([switch]$Unregister)",
+            "$ErrorActionPreference = 'Stop'",
+            "$admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)",
+            "if (-not $admin) {",
+            "    $psExe = Join-Path $env:WINDIR 'System32\\WindowsPowerShell\\v1.0\\powershell.exe'",
+            "    $psArgs = '-NoProfile -ExecutionPolicy Bypass -File \"' + $MyInvocation.MyCommand.Path + '\"'",
+            "    if ($Unregister) { $psArgs += ' -Unregister' }",
+            "    Start-Process $psExe -Verb RunAs -ArgumentList $psArgs -Wait",
+            "    exit",
+            "}",
+            "$root = $PSScriptRoot",
+            "$regsvr = Join-Path $env:WINDIR 'System32\\regsvr32.exe'",
+            "$dll = Join-Path $root 'EqualizerAPO.dll'",
+            "if ($Unregister) {",
+            "    & $regsvr /u /s $dll",
+            "    Remove-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Audio' -Name 'DisableProtectedAudioDG' -ErrorAction SilentlyContinue",
+            "    Remove-Item -Path 'HKLM:\\SOFTWARE\\EqualizerAPO' -Recurse -Force -ErrorAction SilentlyContinue",
+            "    Write-Host 'Equalizer APO registration removed. Uninstall the package now.'",
+            "    exit",
+            "}",
+            "New-Item -Path 'HKLM:\\SOFTWARE\\EqualizerAPO' -Force | Out-Null",
+            "Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\EqualizerAPO' -Name 'InstallPath' -Value $root",
+            "Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\EqualizerAPO' -Name 'ConfigPath' -Value (Join-Path $root 'config')",
+            "Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\EqualizerAPO' -Name 'EnableTrace' -Value 'false'",
+            "New-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Audio' -Name 'DisableProtectedAudioDG' -Value 1 -PropertyType DWord -Force | Out-Null",
+            "& $regsvr /s $dll",
+            "if ($LASTEXITCODE -ne 0) { throw \"regsvr32 failed with exit code $LASTEXITCODE\" }",
+            "Start-Process (Join-Path $root 'DeviceSelector.exe') -WorkingDirectory $root -Wait",
+            "Write-Host 'Equalizer APO is registered. Enable the audio devices in the Device Selector, then reboot.'",
+            "'@",
+            "Set-Content (Join-Path $dir 'register-apo.ps1') -Value $script -Encoding UTF8"
+        ]
+    },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe\" -Recurse -Force -ErrorAction SilentlyContinue",
+    "shortcuts": [
+        [
+            "Editor.exe",
+            "Equalizer APO"
+        ],
+        [
+            "DeviceSelector.exe",
+            "Equalizer APO Device Selector"
+        ]
+    ],
+    "persist": [
+        "config",
+        "VSTPlugins"
+    ],
+    "notes": [
+        "Equalizer APO is a system APO, not a portable GUI: after installing, run '& \"$dir\\register-apo.ps1\"' once. The script self-elevates, registers EqualizerAPO.dll and the config path in HKLM, and opens the Device Selector.",
+        "Tick the playback/capture devices the equalizer should apply to, close the Device Selector, then reboot (or restart the audio service).",
+        "Run '& \"$dir\\register-apo.ps1\" -Unregister' before uninstalling the package, so the APO registration and HKLM keys are removed.",
+        "config (equalizer settings) and VSTPlugins are persisted across updates; no re-registration is needed after an update because the registered paths are not versioned."
+    ],
+    "checkver": "sourceforge",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://sourceforge.net/projects/equalizerapo/files/$version/EqualizerAPO-x64-$version.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://sourceforge.net/projects/equalizerapo/files/$version/EqualizerAPO-x86-$version.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://sourceforge.net/projects/equalizerapo/files/$version/EqualizerAPO-ARM64-$version.exe#/dl.7z"
+            }
+        }
+    }
+}
