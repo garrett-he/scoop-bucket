@@ -1,0 +1,54 @@
+{
+    "##": [
+        "抖音 (Douyin) desktop client, the Windows build of douyin.com. Only a 32-bit Electron build (Electron 39, CPU x86) is published, so there is no architecture block.",
+        "The 254 MiB payload is an NSIS-3 Unicode installer. 7-Zip parses it even though the file is an .exe, so '#/dl.7z' is used to unpack the outer layer, which yields app.7z plus the installer's $PLUGINSDIR/$0/$APPDATA staging folders.",
+        "The install layout was taken from a real silent install: app.7z is expanded into <install>\\<version>\\, while douyin.exe, douyin_guard.exe, launcher_config.json and app_guard_crash_reporter\\ sit at the install root. The launcher reads cur_path from launcher_config.json and refuses to start with \"Couldn't find the program\" if that version directory is absent, so the same two-level layout is reproduced here.",
+        "douyin.exe and douyin_guard.exe are copies of douyin.backup and douyin_guard.backup, which ship with non-executable extensions so that on-disk static scanners skip them; the original installer creates the copies with the same names. Both names are kept because the payload's md5.json integrity list references the .backup files.",
+        "The expansion must run in installer.script rather than post_install: Scoop creates shims and Start Menu shortcuts before post_install, so the launcher would not exist yet.",
+        "The vendor installer additionally registers douyin_performance_service and DouyinElevationService, a LaunchDouyinGuard scheduled task, an HKCU\\Software\\ByteDance\\douyin key and a desktop shortcut, and seeds %APPDATA%\\douyin. None of that is recreated; the client starts without it and rebuilds its own configuration on first run.",
+        "No checksum is published (the CDN only returns a base64 Content-MD5 header), so autoupdate.hash is omitted and Excavator downloads the installer to refresh the hash.",
+        "The CDN path carries a release id (540056698 for 8.8.0) that cannot be derived from the version, so checkver captures it together with the fixed channel id. The download page embeds the same URL both raw and percent-encoded, hence the regex accepts either separator."
+    ],
+    "version": "8.8.0",
+    "description": "Douyin (TikTok China) desktop client",
+    "homepage": "https://www.douyin.com/",
+    "license": "Proprietary",
+    "notes": [
+        "This is the 32-bit Windows build; the vendor publishes no x64 package.",
+        "The package is unpacked, not installed, so the vendor's uninstaller entry, its two services, the LaunchDouyinGuard scheduled task and the file associations are not recreated.",
+        "Login state, cache and settings live under %APPDATA%\\douyin, so nothing is persisted by Scoop.",
+        "The bundled updater may install a newer version beside the packaged one; run 'scoop install douyin --force' to return to the version this manifest pins."
+    ],
+    "url": "https://lf-douyin-pc-web.douyinstatic.com/obj/douyin-pc-web/douyin-pc-client/7044145585217083655/releases/540056698/8.8.0/win32-ia32/douyin-v8.8.0-win32-ia32-douyin.exe#/dl.7z",
+    "hash": "f05cf9c2f8e1ef24f81f7f9855daf631ac943737f89224d11538d763a2f62037",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\app.7z\" \"$dir\\$version\"",
+            "Copy-Item \"$dir\\$version\\douyin.backup\" \"$dir\\douyin.exe\" -Force",
+            "Copy-Item \"$dir\\$version\\douyin_guard.backup\" \"$dir\\douyin_guard.exe\" -Force",
+            "New-Item -ItemType Directory -Force -Path \"$dir\\app_guard_crash_reporter\" | Out-Null",
+            "Copy-Item \"$dir\\$version\\parfait.dll\", \"$dir\\$version\\tt_crash_reporter.exe\", \"$dir\\$version\\tt_crash_reporter_config.dat\" \"$dir\\app_guard_crash_reporter\" -Force",
+            "[System.IO.File]::WriteAllText(\"$dir\\launcher_config.json\", '{\"app_name\":\"douyin\",\"cur_path\":\"' + $version + '\",\"mid_path\":\"\",\"need_update\":false,\"new_path\":\"\",\"installer_path\":\"\"}')",
+            "Remove-Item \"$dir\\app.7z\", \"$dir\\`$PLUGINSDIR\", \"$dir\\`$0\", \"$dir\\`$APPDATA\" -Recurse -Force -ErrorAction SilentlyContinue"
+        ]
+    },
+    "bin": [
+        [
+            "douyin.exe",
+            "douyin"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "douyin.exe",
+            "抖音"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.douyin.com/downloadpage",
+        "regex": "douyin-pc-client(?:/|%2F)(?<xid>\\d+)(?:/|%2F)releases(?:/|%2F)(?<rid>\\d+)(?:/|%2F)(?<version>[\\d.]+)(?:/|%2F)win32-ia32(?:/|%2F)douyin-v[\\d.]+-win32-ia32-douyin\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://lf-douyin-pc-web.douyinstatic.com/obj/douyin-pc-web/douyin-pc-client/$matchXid/releases/$matchRid/$version/win32-ia32/douyin-v$version-win32-ia32-douyin.exe#/dl.7z"
+    }
+}
