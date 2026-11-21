@@ -1,5 +1,5 @@
 {
-    "version": "2.28.13",
+    "version": "2.30.23",
     "description": "AI-powered collaborative design tool from Tencent",
     "homepage": "https://ardot.tencent.com/",
     "license": "Proprietary",
@@ -12,8 +12,8 @@
         "The installer normally registers ArdotBridge and the font helper as Run keys; extraction skips those and Ardot.exe launches both helpers itself by relative path."
     ],
     "notes": "A bundled WinSparkle updater checks the vendor appcast on launch. Let Scoop own upgrades with 'scoop update ardot'; an in-app update would run the Inno installer into its own location and break this package.",
-    "url": "https://static.d.gtimg.com/windows/x86_64/Ardot_Setup_2.28.13_x86_64.exe",
-    "hash": "e272f85d59eeee855504f80b51359b30c2d7642a4d928ccf7a3f922df358130b",
+    "url": "https://static.d.gtimg.com/windows/x86_64/Ardot_Setup_2.30.23_x86_64.exe",
+    "hash": "fd718c4638b505665079291c032ea42f55f2a8237c46a95243ff74501b8cc019",
     "innosetup": true,
     "bin": [
         [
