@@ -1,0 +1,46 @@
+{
+    "version": "1.5.4",
+    "description": "AI-assisted voice and audiobook recording studio (呱呱有声录音宝)",
+    "homepage": "https://gstudios.com.cn/recording",
+    "license": "Proprietary",
+    "##": [
+        "The vendor only serves a ZIP whose sole useful entry is the NSIS setup exe '【win安装包】呱呱有声录音宝_setup_1.5.4.exe' nested under a version folder; the bundled JPG manuals are discarded.",
+        "The zip is extracted by Scoop first; installer.script then expands the NSIS setup exe as 7z and expands its embedded $PLUGINSDIR\\app-64.7z into $dir, which yields the flat Electron payload with 呱呱有声录音宝.exe at the root.",
+        "Only a Windows x64 build exists (app-64.7z), so the manifest is 64-bit only.",
+        "checkver scrapes the server-rendered __NUXT__ state on the recording page for winDownloadAddress; there is no version API or published checksum.",
+        "autoupdate.hash is omitted: the vendor publishes no SHA-256/MD5, so Excavator downloads the ZIP to recompute the hash.",
+        "The version folder and setup exe name both embed the version, so installer.script locates them with wildcards instead of hardcoding 1.5.4."
+    ],
+    "notes": "The JPG usage guides shipped inside the vendor ZIP are not installed; only the recorder application is.",
+    "url": "https://gstudios.ks3-cn-beijing.ksyuncs.com/%E3%80%90win%E3%80%91%E5%91%B1%E5%91%B1%E6%9C%89%E5%A3%B0%E5%BD%95%E9%9F%B3%E5%AE%9DV1.5.4.zip",
+    "hash": "df693e6577aca7b099d95e78b0cb9ef4033084b1537599c935e42e2a51adf916",
+    "installer": {
+        "script": [
+            "$setup = Get-ChildItem -Path $dir -Recurse -Filter '*setup*.exe' | Select-Object -First 1",
+            "$stage = Join-Path $dir '_nsis_stage'",
+            "Expand-7zipArchive -Path $setup.FullName -DestinationPath $stage",
+            "$payload = Get-ChildItem -Path (Join-Path $stage '$PLUGINSDIR') -Filter 'app*.7z' | Select-Object -First 1",
+            "Expand-7zipArchive -Path $payload.FullName -DestinationPath $dir",
+            "Remove-Item $stage, $setup.Directory.FullName -Recurse -Force"
+        ]
+    },
+    "bin": [
+        [
+            "呱呱有声录音宝.exe",
+            "g-recorder"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "呱呱有声录音宝.exe",
+            "呱呱有声录音宝"
+        ]
+    ],
+    "checkver": {
+        "url": "https://gstudios.com.cn/recording",
+        "regex": "winDownloadAddress:\"[^\"]*?V(?<version>[\\d.]+)\\.zip\""
+    },
+    "autoupdate": {
+        "url": "https://gstudios.ks3-cn-beijing.ksyuncs.com/%E3%80%90win%E3%80%91%E5%91%B1%E5%91%B1%E6%9C%89%E5%A3%B0%E5%BD%95%E9%9F%B3%E5%AE%9DV$version.zip"
+    }
+}
