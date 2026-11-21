@@ -1,0 +1,41 @@
+{
+    "version": "1.6.0",
+    "description": "Utility for managing a collection of encrypted secrets in source control",
+    "homepage": "https://github.com/Shopify/ejson",
+    "license": "MIT",
+    "##": [
+        "The Windows release assets are tar.gz archives whose payload is flat: ejson.exe plus README, CHANGELOG and LICENSE. There is no installer and nothing to clean up.",
+        "Both amd64 and arm64 Windows builds are published; the hashes were taken from ejson_1.6.0_checksums.txt and verified against the downloaded archives.",
+        "autoupdate.hash is omitted: the GitHub release assets publish sha256 digests that Excavator reads through the API.",
+        "The keypair lives in $env:EJSON_KEYDIR (or ~/.ejson/keys by default), outside the app directory, so nothing needs persisting."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Shopify/ejson/releases/download/v1.6.0/ejson_1.6.0_windows_amd64.tar.gz",
+            "hash": "35ba831081c9f34d92ced5c64bf5db009bc1d8f3a8e2f5f5c5769d21f7773b49"
+        },
+        "arm64": {
+            "url": "https://github.com/Shopify/ejson/releases/download/v1.6.0/ejson_1.6.0_windows_arm64.tar.gz",
+            "hash": "a8eab7ab1437986a4abac3859e619e1558c1ca2a316fbd659d85efbb4d63fb5a"
+        }
+    },
+    "bin": [
+        [
+            "ejson.exe",
+            "ejson"
+        ]
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/Shopify/ejson/releases/latest"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Shopify/ejson/releases/download/v$version/ejson_$version_windows_amd64.tar.gz"
+            },
+            "arm64": {
+                "url": "https://github.com/Shopify/ejson/releases/download/v$version/ejson_$version_windows_arm64.tar.gz"
+            }
+        }
+    }
+}
