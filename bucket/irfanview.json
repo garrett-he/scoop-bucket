@@ -1,0 +1,85 @@
+{
+    "##": [
+        "IrfanView base viewer. The vendor's own site (irfanview.com) only links to third-party mirrors; dappcdn is behind a Cloudflare challenge and irfanview.info serves a 'click again' interstitial to a bare GET. Scoop sets a same-origin Referer on downloads, which gets the real ZIP from irfanview.info, so the canonical upstream files are used here.",
+        "The vendor publishes SHA-256 checksums for every file on irfanview.com/64bit.htm and /main_download_engl.htm. All four hashes below were verified byte-for-byte against downloaded files; autoupdate re-reads those same pages instead of recomputing hashes.",
+        "Both the 32-bit and 64-bit ZIPs ship the core PlugIns (Effects, Paint, Video, Icons, RegionCapture, Tools, Slideshow) inside Plugins\\ already. The 'All Plugins' pack is a separate package (irfanview-plugins) so it can be installed on demand; both share the same version and update together.",
+        "persist keeps i_view*.ini, Languages and Toolbars (settings the app writes beside the exe) across upgrades, matching the upstream extras manifest."
+    ],
+    "version": "4.76",
+    "description": "A fast, compact and innovative graphic viewer (base application)",
+    "homepage": "https://www.irfanview.com/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.irfanview.com/eula.htm"
+    },
+    "notes": [
+        "Freeware for non-commercial use.",
+        "Install 'garrett-he/irfanview-plugins' to add the complete PlugIn collection."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://www.irfanview.info/files/iview476_x64.zip",
+            "hash": "37f10e9c6ecfeba3d5c0f16cc6f07bdda4ffdf85069613d25ec51f8e4733a9eb",
+            "bin": [
+                [
+                    "i_view64.exe",
+                    "irfanview"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "i_view64.exe",
+                    "IrfanView"
+                ]
+            ]
+        },
+        "32bit": {
+            "url": "https://www.irfanview.info/files/iview476.zip",
+            "hash": "2f37d87dc7f9ce445ac0adc1ec01a1e1348094c904fd68033f60b471519bea85",
+            "bin": [
+                [
+                    "i_view32.exe",
+                    "irfanview"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "i_view32.exe",
+                    "IrfanView"
+                ]
+            ]
+        }
+    },
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\i_view64.ini\")) { New-Item \"$dir\\i_view64.ini\" | Out-Null }",
+        "if (-not (Test-Path \"$persist_dir\\i_view32.ini\")) { New-Item \"$dir\\i_view32.ini\" | Out-Null }"
+    ],
+    "persist": [
+        "i_view64.ini",
+        "i_view32.ini",
+        "Languages",
+        "Toolbars"
+    ],
+    "checkver": {
+        "url": "https://www.irfanview.com/",
+        "regex": ">\\s*version\\s+([\\d.-]+)\\s*<"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.irfanview.info/files/iview$cleanVersion_x64.zip",
+                "hash": {
+                    "url": "https://www.irfanview.com/64bit.htm",
+                    "regex": "iview$cleanVersion_x64\\.zip[^\\r\\n]*ZIP file[^\\r\\n]*\\s+[^\\r\\n]*checksum: $sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://www.irfanview.info/files/iview$cleanVersion.zip",
+                "hash": {
+                    "url": "https://www.irfanview.com/main_download_engl.htm",
+                    "regex": "iview$cleanVersion\\.zip[^\\r\\n]*-\\s+$sha256"
+                }
+            }
+        }
+    }
+}

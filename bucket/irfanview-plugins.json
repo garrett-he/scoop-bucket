@@ -1,0 +1,68 @@
+{
+    "##": [
+        "The complete 'All Plugins' pack. Scoop supports dependencies, so depends pulls in garrett-he/irfanview automatically; installing this package alone gives a working IrfanView with every PlugIn.",
+        "The plugin ZIP is flat: DLLs at the root plus a Plugins32\\ subfolder. The base viewer already has a Plugins\\ directory holding the core PlugIns, so installer.script copies this archive's contents into <irfanview>\\current\\Plugins\\ (exactly the layout the upstream extras manifest achieves with extract_to). Uninstall removes only the copied files.",
+        "Both packages share one version number and are bumped together by Excavator. If the base viewer alone is upgraded without this package, the extra DLLs in its versioned Plugins\\ dir must be restored by re-running 'scoop install irfanview-plugins -f'.",
+        "dappcdn (the mirror the vendor recommends) is behind a Cloudflare challenge; irfanview.info serves the real ZIP when Scoop sends its same-origin Referer. Hashes are the SHA-256 values the vendor publishes on 64bit.htm and plugins.htm, verified byte-for-byte against the downloaded files."
+    ],
+    "version": "4.76",
+    "description": "All PlugIns for IrfanView (installs IrfanView automatically)",
+    "homepage": "https://www.irfanview.com/plugins.htm",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.irfanview.com/eula.htm"
+    },
+    "depends": "garrett-he/irfanview",
+    "notes": [
+        "Freeware for non-commercial use.",
+        "32-bit PlugIns go to the 32-bit IrfanView and 64-bit PlugIns to the 64-bit one; do not mix architectures."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://www.irfanview.info/files/iview476_plugins_x64.zip",
+            "hash": "13eb6e1cbe51c4b2c4f8a3a08166b8b9fbbcec03488ba5a8d112454c23fc715d"
+        },
+        "32bit": {
+            "url": "https://www.irfanview.info/files/iview476_plugins.zip",
+            "hash": "5b6b01b0d4449c9e52c01b082640883dbcee29617c762b49472f268ed308eeed"
+        }
+    },
+    "installer": {
+        "script": [
+            "$target = Join-Path (appdir irfanview $global) 'current\\Plugins'",
+            "if (Test-Path $target) {",
+            "    Get-ChildItem $dir -Exclude 'scoop-install.json', 'scoop-manifest.json' | Copy-Item -Destination $target -Recurse -Force",
+            "}"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$target = Join-Path (appdir irfanview $global) 'current\\Plugins'",
+            "if (Test-Path $target) {",
+            "    Get-ChildItem $dir -Exclude 'scoop-install.json', 'scoop-manifest.json' -Name | ForEach-Object { Remove-Item (Join-Path $target $_) -Force -Recurse -ErrorAction SilentlyContinue }",
+            "}"
+        ]
+    },
+    "checkver": {
+        "url": "https://www.irfanview.com/plugins.htm",
+        "regex": "The current PlugIns version is:\\s*([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.irfanview.info/files/iview$cleanVersion_plugins_x64.zip",
+                "hash": {
+                    "url": "https://www.irfanview.com/64bit.htm",
+                    "regex": "iview$cleanVersion_plugins_x64\\.zip[^\\r\\n]*ZIP file[^\\r\\n]*\\s+[^\\r\\n]*checksum: $sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://www.irfanview.info/files/iview$cleanVersion_plugins.zip",
+                "hash": {
+                    "url": "https://www.irfanview.com/plugins.htm",
+                    "regex": "iview$cleanVersion_plugins\\.zip[^\\r\\n]*\\s+[^\\r\\n]*checksum: $sha256"
+                }
+            }
+        }
+    }
+}
