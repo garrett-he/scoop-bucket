@@ -1,0 +1,60 @@
+{
+    "##": [
+        "QQ Music (QQ音乐) PC client from y.qq.com.",
+        "The download page https://y.qq.com/n/ryqq_v2/download_detail/pc is a JS shell; the release feed is https://y.qq.com/download/download.js, a JSONP payload whose first entry (\"Windows PC\") carries the display version, the setup file name and the download signature.",
+        "The installer is gated behind a per-file signature: c.y.qq.com/cgi-bin/file_redirect.fcg answers 403 to an unsigned request and 302 to dldir.y.qq.com only when sign matches the file name, and the sign changes with every release. checkver therefore captures (?<sign>) together with (?<setup>) and autoupdate rebuilds both halves of the URL.",
+        "The payload is a Tencent TinyInstaller wrapper: 7-Zip lists only the PE stub, while the 332 MB client sits in a proprietary container (the installer references it as ProgramFiles.7z) that does not expose a standard archive header. The manifest therefore uses the vendor's documented silent switches instead of extracting.",
+        "installdir is the parent of the client folder. Passing $dir makes the installer create $dir\\QQMusic and record that path under HKLM\\SOFTWARE\\WOW6432Node\\Tencent\\QQMusic, so bin and shortcuts point one level down rather than moving the tree and breaking the installer's own bookkeeping.",
+        "The feed's Fversion value is prefixed with a localized label, so the regex steps over everything before the first dotted number instead of matching the label text; the display version (22.8.2) differs from the PE file version (22.82) and from the setup suffix (2282).",
+        "desktopshortcut/songrecognitionshortcut/autostart are disabled so that Scoop's Start Menu entry is the only shortcut created.",
+        "The vendor's own uninstaller is run silently on 'scoop uninstall' (it is the only thing that clears HKLM and the QQ-specific file associations); the Test-Path guard covers a half-finished install.",
+        "The #/dl.exe fragment only renames the cached download: without it Scoop would save the response as file_redirect.fcg and then try to execute that name. The file is a plain PE, so Invoke-Extraction leaves it alone and Invoke-Installer runs it.",
+        "No checksum is published, so autoupdate.hash is omitted and Excavator downloads the full 113 MB setup to refresh the hash."
+    ],
+    "version": "22.8.2",
+    "description": "QQ Music (QQ音乐) desktop music streaming client",
+    "homepage": "https://y.qq.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://y.qq.com/i/user_terms.html"
+    },
+    "notes": [
+        "Installed with the vendor's silent switches into $dir\\QQMusic; the installer also registers an uninstall entry, HKLM\\SOFTWARE\\WOW6432Node\\Tencent\\QQMusic and the QQ-specific audio associations (qmc/mflac/mgg/qrc). 'scoop uninstall' runs the vendor uninstaller silently so those are removed too.",
+        "Cache, downloads and settings live in %APPDATA%\\Tencent\\QQMusic, so nothing needs to be persisted.",
+        "The bundled updater (QQMusicUp.exe) can replace files inside the app directory; decline its update prompt and run 'scoop update qqmusic' instead."
+    ],
+    "url": "https://c.y.qq.com/cgi-bin/file_redirect.fcg?bid=dldir&file=ecosfile%2Fmusic_clntupate%2Fpc%2Fother%2FQQMusic_Setup_2282.exe&sign=1-504f473ea8b142fb16fe8b22379078ee8f00791cca32ee50200aaa06324365a8-6afaa6ec#/dl.exe",
+    "hash": "da2ef1b74729bfffc9789c6b6151578ff7dee7643ca1605eea855764535ef078",
+    "installer": {
+        "args": [
+            "silence=1",
+            "installdir=$dir",
+            "runafterinstall=no",
+            "desktopshortcut=no",
+            "songrecognitionshortcut=no",
+            "autostart=no"
+        ]
+    },
+    "uninstaller": {
+        "script": "if (Test-Path \"$dir\\QQMusic\\QQMusicUninst.exe\") { Start-Process -FilePath \"$dir\\QQMusic\\QQMusicUninst.exe\" -ArgumentList '/s' -Wait }"
+    },
+    "bin": [
+        [
+            "QQMusic\\QQMusic.exe",
+            "qqmusic"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "QQMusic\\QQMusic.exe",
+            "QQ音乐"
+        ]
+    ],
+    "checkver": {
+        "url": "https://y.qq.com/download/download.js",
+        "regex": "\"Ftype\":1,\"Ftitle\":\"Windows PC\",\"Fversion\":\"[^\"]*?(?<version>\\d+(?:\\.\\d+)+)\"[\\s\\S]{0,3000}?QQMusic_Setup_(?<setup>\\d+)\\.exe&sign=(?<sign>[^\"&]+)\""
+    },
+    "autoupdate": {
+        "url": "https://c.y.qq.com/cgi-bin/file_redirect.fcg?bid=dldir&file=ecosfile%2Fmusic_clntupate%2Fpc%2Fother%2FQQMusic_Setup_$matchSetup.exe&sign=$matchSign#/dl.exe"
+    }
+}
