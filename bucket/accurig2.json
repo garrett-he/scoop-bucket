@@ -1,0 +1,45 @@
+{
+    "version": "2.1.1",
+    "description": "Free automatic rigging tool that turns 3D character models into fully rigged characters",
+    "homepage": "https://actorcore.reallusion.com/auto-rig/accurig",
+    "license": "Proprietary",
+    "##": [
+        "The product page's download button serves AccuRig_Webinstaller.exe, a 1.1 MiB NSIS downloader stub that fetches the real setup at run time; the manifest skips the stub and pins the versioned full installer published in the same bucket.",
+        "latest.yml is the electron-updater feed for the app: it names AccuRIG_Setup_<version>.exe and publishes the sha512 of each release. checkver and autoupdate.hash both read it, so no page scraping and no re-download of the 400 MiB installer on update.",
+        "The setup is an NSIS-3 wrapper: 7-Zip yields $PLUGINSDIR\\app-64.7z (a flat Electron payload with AccuRIG.exe at the root), Uninstall AccuRIG.exe and uninstallerIcon.ico. The bundled VCRuntime and DirectX installers under $PLUGINSDIR\\ActoreCore are not used; installer.script expands app-64.7z and drops the NSIS leftovers.",
+        "Only a win-x64 build is published and the executable requests asInvoker, so no admin rights are needed.",
+        "User data stays outside the app directory: the app redirects userData to %LOCALAPPDATA%\\Reallusion\\ActorCore AccuRIG, uses a Reallusion folder in Documents, and keeps the electron-updater cache in %LOCALAPPDATA%; nothing under the app dir needs persisting.",
+        "The top-level hash is the sha512 from latest.yml, verified against the downloaded installer."
+    ],
+    "url": "https://file.reallusion.com/ActorCore_AccRIG/AccuRIG_Setup_2.1.1.exe#/dl.7z",
+    "hash": "sha512:c09eb96248a538ffd4648d705328f666f480184ebf5d54ce783403e7b9c041b873485c50b52d7b0830fdf250be8ff4ae139ea23811e35554be0b194647ee7767",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall AccuRIG.exe\", \"$dir\\uninstallerIcon.ico\" -Recurse -Force"
+        ]
+    },
+    "bin": [
+        [
+            "AccuRIG.exe",
+            "accurig2"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "AccuRIG.exe",
+            "AccuRIG 2"
+        ]
+    ],
+    "checkver": {
+        "url": "https://file.reallusion.com/ActorCore_AccRIG/latest.yml",
+        "regex": "version:\\s*([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://file.reallusion.com/ActorCore_AccRIG/AccuRIG_Setup_$version.exe#/dl.7z",
+        "hash": {
+            "url": "https://file.reallusion.com/ActorCore_AccRIG/latest.yml",
+            "regex": "sha512:\\s*([A-Za-z0-9+/=]+)"
+        }
+    }
+}
