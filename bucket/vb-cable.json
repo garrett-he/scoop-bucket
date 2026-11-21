@@ -1,0 +1,52 @@
+{
+    "version": "3.5.2.0",
+    "description": "Virtual audio cable driver (MME, DX, KS, WASAPI) that loops playback from the CABLE Input device to the CABLE Output device, with up to 16 channels on Windows 10 x64",
+    "homepage": "https://vb-audio.com/Cable/index.htm",
+    "license": {
+        "identifier": "Donationware",
+        "url": "https://vb-audio.com/Services/licensing.htm"
+    },
+    "##": [
+        "The download is a flat archive: installer CAT/SYS/INF files for XP through Windows 11 (x86, x64, ARM64), VBCABLE_Setup.exe, VBCABLE_Setup_x64.exe and VBCABLE_ControlPanel.exe. No extract_dir is needed.",
+        "VB-CABLE is a kernel-mode audio driver: installation needs administrator rights and a reboot, and the vendor setup offers both 'Install Driver' and 'Remove Driver' in its window. The manifest therefore only unpacks the package and writes vb-cable-setup.ps1, which elevates and launches the arch-appropriate setup instead of prompting for UAC during scoop install.",
+        "version is the driver version from the page's schema.org softwareVersion; the download filename only carries a package number (VBCABLE_Driver_Pack46.zip), which checkver captures as 'pack' and autoupdate reuses through $matchPack.",
+        "autoupdate.hash is omitted: the vendor publishes no checksum, so Excavator downloads the ~1.3 MB package to recompute SHA-256.",
+        "No persist: the control panel keeps its settings in HKLM\\SOFTWARE\\VB-Audio\\Cable, and the driver itself is installed outside the package directory.",
+        "One archive carries every driver build, so the manifest uses a single url instead of an architecture block; vb-cable-setup.ps1 picks VBCABLE_Setup_x64.exe on 64-bit Windows (the package also ships the ARM64 driver) and VBCABLE_Setup.exe on 32-bit Windows."
+    ],
+    "notes": [
+        "VB-CABLE is a driver, not a portable app: after installing the package run '& \"$dir\\vb-cable-setup.ps1\"' once. It elevates and opens the setup, where you click 'Install Driver' and reboot to finish.",
+        "The control panel shortcut (VBCABLE_ControlPanel.exe) changes the current/max latency and the pin name and icon per device; settings live in HKLM\\SOFTWARE\\VB-Audio\\Cable.",
+        "Before 'scoop uninstall', run the same script and click 'Remove Driver', then reboot, otherwise the driver stays in the Windows driver store."
+    ],
+    "url": "https://download.vb-audio.com/Download_CABLE/VBCABLE_Driver_Pack46.zip",
+    "hash": "bc44e8974191a5a2427d6c979e2dab08dbb09925f3f435dfa2f0ba3e45b6eb90",
+    "installer": {
+        "script": [
+            "$script = @'",
+            "$setup = Join-Path $PSScriptRoot $(if ([Environment]::Is64BitOperatingSystem) { 'VBCABLE_Setup_x64.exe' } else { 'VBCABLE_Setup.exe' })",
+            "if (-not (Test-Path $setup)) { throw \"Setup program not found: $setup\" }",
+            "try {",
+            "    Start-Process $setup -WorkingDirectory $PSScriptRoot -Verb RunAs -Wait",
+            "} catch {",
+            "    throw \"Could not start the setup elevated: $($_.Exception.Message)\"",
+            "}",
+            "Write-Host 'Click Install Driver (or Remove Driver) in the setup window, then reboot to finish.'",
+            "'@",
+            "Set-Content (Join-Path $dir 'vb-cable-setup.ps1') -Value $script -Encoding UTF8"
+        ]
+    },
+    "shortcuts": [
+        [
+            "VBCABLE_ControlPanel.exe",
+            "VB-CABLE Control Panel"
+        ]
+    ],
+    "checkver": {
+        "url": "https://vb-audio.com/Cable/index.htm",
+        "regex": "softwareVersion\"\\s*:\\s*\"(?<version>[\\d.]+)\"[\\s\\S]*?VBCABLE_Driver_Pack(?<pack>\\d+)\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://download.vb-audio.com/Download_CABLE/VBCABLE_Driver_Pack$matchPack.zip"
+    }
+}

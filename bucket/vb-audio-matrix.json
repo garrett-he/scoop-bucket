@@ -1,0 +1,46 @@
+{
+    "version": "1.0.2.9",
+    "description": "Universal real-time audio router with a 680 x 680 point routing matrix across ASIO, WDM/MME, VAIO virtual devices and VBAN",
+    "homepage": "https://vb-audio.com/Matrix/",
+    "license": {
+        "identifier": "Donationware",
+        "url": "https://vb-audio.com/Services/licensing.htm"
+    },
+    "##": [
+        "The zip holds a single file, VBAudioMatrix_Setup.exe: a custom 32-bit installer whose 15.7 MB payload is a compressed blob with no 7z/zip/NSIS/Inno header, so neither Scoop nor 7-Zip can unpack the application, and no extract_dir applies.",
+        "The vendor setup is interactive-only (it waits for the Install/Remove button and has no documented silent switch), and it writes the application, the VAIO virtual audio drivers and its Start Menu shortcuts under Program Files, plus its own Programs and Features entry. The manifest therefore ships the verified package and writes vb-audio-matrix-setup.ps1, which elevates and launches that setup instead of prompting for UAC during scoop install.",
+        "Because the application and drivers live outside the package directory, the manifest has no bin or shortcuts; those are created by the vendor setup.",
+        "version is the application version from the page's schema.org softwareVersion; the download filename only carries a compact build token (VBAudioMatrix_Setup_v1029.zip), captured as 'build' so autoupdate can rebuild the URL.",
+        "autoupdate.hash is omitted: the vendor publishes no checksum, so Excavator downloads the 15 MB package to recompute SHA-256.",
+        "No persist: the application keeps its settings in %APPDATA% and the registry, not in the package directory."
+    ],
+    "notes": [
+        "VB-Audio Matrix is installed by its own setup, not unpacked into the Scoop directory: after installing the package run '& \"$dir\\vb-audio-matrix-setup.ps1\"' once. It elevates, then click Install and reboot to finish.",
+        "The setup installs the router application, the VAIO virtual audio drivers and Start Menu shortcuts, and registers a Programs and Features entry of its own.",
+        "Before 'scoop uninstall', run the same script and click Remove, then reboot, otherwise the application and drivers stay on the system."
+    ],
+    "url": "https://download.vb-audio.com/Download_Mixer/VBAudioMatrix_Setup_v1029.zip",
+    "hash": "068f38f5e5f83b6679d9bdd2c5e1bcef456711fd0224e2b0c57379ee73ce3479",
+    "installer": {
+        "script": [
+            "$script = @'",
+            "$setup = Join-Path $PSScriptRoot 'VBAudioMatrix_Setup.exe'",
+            "if (-not (Test-Path $setup)) { throw \"Setup program not found: $setup\" }",
+            "try {",
+            "    Start-Process $setup -WorkingDirectory $PSScriptRoot -Verb RunAs -Wait",
+            "} catch {",
+            "    throw \"Could not start the setup elevated: $($_.Exception.Message)\"",
+            "}",
+            "Write-Host 'Click Install (or Remove) in the setup window, then reboot to finish.'",
+            "'@",
+            "Set-Content (Join-Path $dir 'vb-audio-matrix-setup.ps1') -Value $script -Encoding UTF8"
+        ]
+    },
+    "checkver": {
+        "url": "https://vb-audio.com/Matrix/",
+        "regex": "softwareVersion\"\\s*:\\s*\"(?<version>[\\d.]+)\"[\\s\\S]*?VBAudioMatrix_Setup_v(?<build>\\d+)\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://download.vb-audio.com/Download_Mixer/VBAudioMatrix_Setup_v$matchBuild.zip"
+    }
+}
