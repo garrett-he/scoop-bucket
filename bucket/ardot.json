@@ -1,0 +1,37 @@
+{
+    "version": "2.28.13",
+    "description": "AI-powered collaborative design tool from Tencent",
+    "homepage": "https://ardot.tencent.com/",
+    "license": "Proprietary",
+    "##": [
+        "The website only links a moving .../Ardot_Setup_latest_x86_64.exe URL. The versioned URL below is taken from the vendor's WinSparkle appcast at https://static.d.gtimg.com/windows/x86_64/ArdotAppcast.xml, so cached downloads stay tied to one version; the two files were byte-identical at 2.28.13.",
+        "checkver reads the same appcast and captures the version from the newest <enclosure>, which the feed lists first.",
+        "Only a Windows x86_64 build is published: windows/arm64 and windows/x86 appcasts return 404, so the manifest is 64-bit only.",
+        "The 187 MiB Inno Setup 6.7 installer is unpacked with innounp. Its files are flat under {app}, with Ardot.exe at the root, so no extract_dir or installer script is needed.",
+        "The appcast publishes only an EdDSA signature, not a SHA-256/MD5, and there is no checksum sidecar. autoupdate.hash is therefore omitted so Excavator downloads the new installer to recompute the hash.",
+        "The installer normally registers ArdotBridge and the font helper as Run keys; extraction skips those and Ardot.exe launches both helpers itself by relative path."
+    ],
+    "notes": "A bundled WinSparkle updater checks the vendor appcast on launch. Let Scoop own upgrades with 'scoop update ardot'; an in-app update would run the Inno installer into its own location and break this package.",
+    "url": "https://static.d.gtimg.com/windows/x86_64/Ardot_Setup_2.28.13_x86_64.exe",
+    "hash": "e272f85d59eeee855504f80b51359b30c2d7642a4d928ccf7a3f922df358130b",
+    "innosetup": true,
+    "bin": [
+        [
+            "Ardot.exe",
+            "ardot"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Ardot.exe",
+            "Ardot"
+        ]
+    ],
+    "checkver": {
+        "url": "https://static.d.gtimg.com/windows/x86_64/ArdotAppcast.xml",
+        "regex": "Ardot_Setup_(?<version>[\\d.]+)_x86_64\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://static.d.gtimg.com/windows/x86_64/Ardot_Setup_$version_x86_64.exe"
+    }
+}
