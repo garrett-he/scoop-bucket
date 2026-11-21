@@ -7,7 +7,7 @@
         "checkver reads the vendor's own upgrade-check endpoint. data.version is the minimum supported build (1.49.10, with a 'please upgrade' notice), data.newest_version is the build actually published under doubao_pc/.",
         "The CDN publishes no checksum, so autoupdate.hash is omitted and Excavator recomputes the SHA-256 from the download."
     ],
-    "version": "2.36.10",
+    "version": "2.36.14",
     "description": "Doubao Work desktop client, ByteDance's AI assistant for research, writing, data work and app building",
     "homepage": "https://www.doubao.com/work",
     "license": {
@@ -20,8 +20,8 @@
         "Because the vendor installer is not run, there is no doubao:// protocol handler, Explorer context menu or autostart entry. Launch the app once from the shortcut if you want its own startup registration.",
         "The bundled updater (update.exe) and the launcher in launcher\\ are left in place, but an in-app update rewrites files inside the Scoop app directory; decline it and run 'scoop update doubao-work' instead."
     ],
-    "url": "https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao_pc/2.36.10/Doubao_installer_2.36.10.exe#/dl.7z",
-    "hash": "fbdd34b3ad65e53103f2512e4c6096ecf45672cc92262220985b94e494fccd9d",
+    "url": "https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao_pc/2.36.14/Doubao_installer_2.36.14.exe#/dl.7z",
+    "hash": "37f121c0972bc251bbb548c58bb32107f08ad79bac1e61a298d8b8ab2c8972bc",
     "installer": {
         "script": [
             "$payload = Get-ChildItem \"$dir\\*~\" -Force | Select-Object -First 1",
