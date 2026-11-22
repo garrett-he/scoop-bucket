@@ -1,0 +1,45 @@
+{
+    "##": [
+        "The Windows release asset is a flat ZIP with DeSmuME_0.9.13_x64.exe at the root; no extract_dir or installer hooks are needed.",
+        "The executable name embeds the version, so pre_install renames it to DeSmuME_x64.exe before shims and shortcuts are created; this keeps them valid after an upgrade.",
+        "Release tags use underscores (release_0_9_13) while asset filenames use dots, so checkver converts the tag to 0.9.13 and autoupdate uses $underscoreVersion in the tag path.",
+        "The Windows frontend writes desmume.ini in its working directory, so that file is persisted across upgrades.",
+        "The release asset has no published digest, so autoupdate.hash is omitted and Excavator downloads the archive to compute its SHA-256."
+    ],
+    "version": "0.9.13",
+    "description": "A Nintendo DS emulator",
+    "homepage": "https://github.com/TASEmulators/desmume",
+    "license": "GPL-2.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/TASEmulators/desmume/releases/download/release_0_9_13/desmume-0.9.13-win64.zip",
+            "hash": "cbf710b8e6b29f0904e289a9b9a895548a2d7c7af5a3145c8279b97a69a09276"
+        }
+    },
+    "pre_install": "Move-Item -Path \"$dir\\DeSmuME_*_x64.exe\" -Destination \"$dir\\DeSmuME_x64.exe\" -Force",
+    "persist": "desmume.ini",
+    "bin": [
+        [
+            "DeSmuME_x64.exe",
+            "desmume"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "DeSmuME_x64.exe",
+            "DeSmuME"
+        ]
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/TASEmulators/desmume/releases/latest",
+        "regex": "release_(\\d+)_(\\d+)_(\\d+)",
+        "replace": "$1.$2.$3"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/TASEmulators/desmume/releases/download/release_$underscoreVersion/desmume-$version-win64.zip"
+            }
+        }
+    }
+}
