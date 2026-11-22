@@ -1,0 +1,73 @@
+{
+    "##": [
+        "The official download page links https://download.comfy.org/windows/nsis/x64, a 307 redirect to the ToDesktop app 241130tqe9q3y. The pinned build URL below resolves without a redirect and matches the build token in the vendor's latest.yml feed.",
+        "checkver reads https://download.todesktop.com/241130tqe9q3y/latest.yml, which publishes both the version and the build token; the token cannot be derived from the version alone because it appears in the filename and the pinned URL. The dl.todesktop.com host serves the binaries but rejects latest.yml with HTTP 400.",
+        "Both Windows NSIS installers wrap app-64.7z / app-arm64.7z with 'Comfy Desktop.exe' flat at the root. The outer stub, $PLUGINSDIR (including the VC redist bootstrapper) and $R0 uninstaller are removed so Scoop owns the install.",
+        "autoupdate.hash reads the base64 SHA-512 published in latest.yml; Scoop converts it to hex and prefixes sha512:. The pinned hashes were verified against locally computed SHA-512 values."
+    ],
+    "version": "1.1.10",
+    "description": "Run ComfyUI locally with a bundled Python runtime and GPU acceleration",
+    "homepage": "https://comfy.org/download/",
+    "license": "AGPL-3.0-or-later",
+    "notes": [
+        "Comfy Desktop is dual-licensed under AGPL-3.0-or-later or a commercial license from Comfy Org; see the LICENSE file in the upstream repository.",
+        "User files, workflows and models are stored under \"$env:APPDATA\\ComfyUI\" and the updater cache under \"$env:LOCALAPPDATA\\comfyui-desktop-2-updater\", so they survive Scoop upgrades.",
+        "The bundled updater stays enabled. An in-app update runs the vendor installer and installs a separate per-user copy outside the Scoop app directory; run 'scoop install comfy-desktop -f' afterwards to return to the packaged build."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://dl.todesktop.com/241130tqe9q3y/builds/261118efu5bs6tj/windows/nsis/x64",
+            "hash": "sha512:327047508c87b1859c0865dd254740cb6cabe2e55e9da29e49417a4db0f7d41b5cee154fbcc2423f7bbbf1dd6f2cbad915a8e14b6b92fd189999bef94a5f9f38",
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force"
+                ]
+            }
+        },
+        "arm64": {
+            "url": "https://dl.todesktop.com/241130tqe9q3y/builds/261118efu5bs6tj/windows/nsis/arm64",
+            "hash": "sha512:a1b941e592fc88866c8097219a36c2d5d69a5907d893530d5097ee14a162603784d58daadab17d274a436f950539e741cc8cd9c62b414e4736aec8d62c4313c0",
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force"
+                ]
+            }
+        }
+    },
+    "bin": [
+        [
+            "Comfy Desktop.exe",
+            "comfy-desktop"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Comfy Desktop.exe",
+            "Comfy Desktop"
+        ]
+    ],
+    "checkver": {
+        "url": "https://download.todesktop.com/241130tqe9q3y/latest.yml",
+        "regex": "version:\\s*(?<version>\\d+(?:\\.\\d+)+)[\\s\\S]*?url:\\s*[^\\r\\n]*?(?<build>\\d{6}[A-Za-z0-9]+)-x64\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dl.todesktop.com/241130tqe9q3y/builds/$matchBuild/windows/nsis/x64",
+                "hash": {
+                    "url": "https://download.todesktop.com/241130tqe9q3y/latest.yml",
+                    "regex": "-x64\\.exe\\s+sha512:\\s*([A-Za-z0-9+/=]+)"
+                }
+            },
+            "arm64": {
+                "url": "https://dl.todesktop.com/241130tqe9q3y/builds/$matchBuild/windows/nsis/arm64",
+                "hash": {
+                    "url": "https://download.todesktop.com/241130tqe9q3y/latest.yml",
+                    "regex": "-arm64\\.exe\\s+sha512:\\s*([A-Za-z0-9+/=]+)"
+                }
+            }
+        }
+    }
+}
