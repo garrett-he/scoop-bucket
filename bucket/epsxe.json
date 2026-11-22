@@ -1,0 +1,48 @@
+{
+    "##": [
+        "The vendor's download page links the current Windows ZIP from the headline row; the adjacent disk icon still points at the older 2.0.5 ZIP, so checkver anchors on the text link instead.",
+        "The archive is a flat Win32 ZIP with ePSXe.exe at the root; the vendor does not publish a 64-bit Windows build. No checksum is published, so autoupdate downloads the new payload to compute its SHA-256.",
+        "The bundled docs/ePSXe_en.txt calls the software freeware and documents the bios, cheats, config, covers, idx, info, isos, memcards, patches, plugins, shaders, snap and sstates directories as user data; these are persisted across upgrades."
+    ],
+    "version": "2.0.18",
+    "description": "PlayStation 1 emulator for Windows",
+    "homepage": "https://www.epsxe.com/",
+    "license": "Freeware",
+    "notes": "A legally obtained PlayStation BIOS is optional; ePSXe also includes an internal HLE BIOS.",
+    "url": "https://www.epsxe.com/files/ePSXe2018.zip",
+    "hash": "ec0d0e235f839261818acc5118cd810a7193b0fbcbd339517f884dffc31792bb",
+    "bin": [
+        [
+            "ePSXe.exe",
+            "epsxe"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "ePSXe.exe",
+            "ePSXe"
+        ]
+    ],
+    "persist": [
+        "bios",
+        "cheats",
+        "config",
+        "covers",
+        "idx",
+        "info",
+        "isos",
+        "memcards",
+        "patches",
+        "plugins",
+        "shaders",
+        "snap",
+        "sstates"
+    ],
+    "checkver": {
+        "url": "https://www.epsxe.com/download.php",
+        "regex": "href=\"https://www\\.epsxe\\.com/files/(?<filename>ePSXe[\\w.-]+\\.zip)\"><b>ePSXe v(?<version>[\\d.]+) Windows</b>"
+    },
+    "autoupdate": {
+        "url": "https://www.epsxe.com/files/$matchFilename"
+    }
+}
