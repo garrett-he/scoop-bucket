@@ -1,0 +1,55 @@
+{
+    "##": [
+        "The vendor download page redirects to updater.json, which publishes the current version, the build-token path and an MD5 for the MSI; the ZIP advertised by the page only wraps the same MSI.",
+        "The MSI payload is 64-bit only (x64 libraries and a bundled VC++ x64 redistributable), so the manifest uses a single url instead of an architecture block.",
+        "Scoop unpacks the MSI with msiexec /a (or lessmsi when configured); extract_dir selects Logi\\MIXLINE from the admin-install layout, leaving the app's MIXLINE, UI and DriverInstaller folders at the root.",
+        "The virtual audio driver is a kernel driver installed by an MSI custom action; extraction alone cannot install it, so installer.script writes a helper that runs MIXLINE.DriverInstaller.exe elevated on demand.",
+        "autoupdate.hash reads the published msiMd5, so Excavator can update without downloading the 71 MiB installer."
+    ],
+    "version": "1.1.64.9364",
+    "description": "Audio routing, mixing and streaming software with a drag-and-drop signal mixer",
+    "homepage": "https://www.logitechg.com/en-us/software/mixline",
+    "license": "Proprietary",
+    "notes": [
+        "MIXLINE needs its virtual audio driver for routing: run '& \"$dir\\mixline-driver.ps1\"' once and approve the elevation prompt; a reboot may be required.",
+        "Before 'scoop uninstall', run '& \"$dir\\mixline-driver.ps1\" uninstall' to remove the driver as well."
+    ],
+    "url": "https://updates-mixline.logitech.io/builds/1.1.64.9364.f609329143f60caf22886ef5c0898abc/MIXLINE-1.1.64.9364.msi",
+    "hash": "bf983f73c7f1082acfa3729950ccfd6347ee0d01a4d2fd59d069173f097ba201",
+    "extract_dir": "LocalAppDataFolder\\Logi\\MIXLINE",
+    "installer": {
+        "script": [
+            "$script = @'",
+            "param([ValidateSet('install', 'uninstall')]$Action = 'install')",
+            "$installer = Join-Path $PSScriptRoot 'DriverInstaller\\MIXLINE.DriverInstaller.exe'",
+            "if (-not (Test-Path -LiteralPath $installer)) { throw \"Driver installer not found: $installer\" }",
+            "$flag = if ($Action -eq 'uninstall') { '--uninstall' } else { '--install' }",
+            "Start-Process -FilePath $installer -ArgumentList $flag -Verb RunAs -Wait",
+            "'@",
+            "Set-Content (Join-Path $dir 'mixline-driver.ps1') -Value $script -Encoding UTF8"
+        ]
+    },
+    "bin": [
+        [
+            "MIXLINE\\MIXLINE.exe",
+            "mixline"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "MIXLINE\\MIXLINE.exe",
+            "MIXLINE"
+        ]
+    ],
+    "checkver": {
+        "url": "https://updates-mixline.logitech.io/appgate/beta/channels/prod/updater.json",
+        "regex": "\"version\":\\s*\"(?<version>[\\d.]+)\"[\\s\\S]*?\"msi\":\\s*\"/builds/(?<build>[^\"/]+)/MIXLINE-[\\d.]+\\.msi\""
+    },
+    "autoupdate": {
+        "url": "https://updates-mixline.logitech.io/builds/$matchBuild/MIXLINE-$version.msi",
+        "hash": {
+            "url": "https://updates-mixline.logitech.io/appgate/beta/channels/prod/updater.json",
+            "jp": "$.msiMd5"
+        }
+    }
+}
