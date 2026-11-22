@@ -1,0 +1,42 @@
+{
+    "##": [
+        "Windows build is pinned with platformId=1; the download page's platformId=0 resolves to 1 on Windows and 4 on macOS.",
+        "The vendor API returns a dated CDN path and a build number that cannot be derived from the version; checkver captures the full URL as 'winurl' and autoupdate reuses $matchWinurl.",
+        "This is an Inno Setup 6.1 installer; innosetup=true unpacks it with innounp. Installer Run entries are not executed, so the bundled virtual audio drivers (DubbingAudio, DubbingAIAudio, AudioMirror) are left unregistered.",
+        "The bundled updater in updater/DubbingLauncher.exe may update the app outside Scoop; reinstall with 'scoop install dubbing-rtvc -f' to return to the packaged files."
+    ],
+    "version": "2.5.17",
+    "description": "Real-time AI voice changer with low latency and a large voice library (DubbingVC)",
+    "homepage": "https://dubbing.tech/",
+    "license": "Proprietary",
+    "notes": [
+        "Scoop extracts the installer rather than running it: the virtual audio drivers under DubbingAudio, DubbingAIAudio and AudioMirror are not installed. Run their install.bat files as administrator if the app cannot select its virtual microphone.",
+        "The bundled updater may replace files in the app directory outside Scoop."
+    ],
+    "url": "https://dvi.dubbing.tech/version_assets/2026/11/10/DubbingVC_v2.5.17_11102314_C_Release_SetupSigned_Release.exe",
+    "hash": "d9c5533df9bd282ce610b2ab2d37b01cf4f5078fa21fdc8c43a3767989f874f8",
+    "innosetup": true,
+    "bin": [
+        [
+            "DubbingVC.exe",
+            "dubbing-rtvc"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "DubbingVC.exe",
+            "大饼AI变声"
+        ]
+    ],
+    "checkver": {
+        "url": "https://dubbing.tech/p/console/api/officialSite/download?productId=5&platformId=1&channel=official&versionId=0&fromUserId=0",
+        "jsonpath": "$.data.downloadUrl",
+        "regex": "(?<winurl>https://[^\\s]+DubbingVC_v(?<version>[\\d.]+)_[^\\s]+\\.exe)"
+    },
+    "autoupdate": {
+        "url": "$matchWinurl",
+        "hash": {
+            "mode": "download"
+        }
+    }
+}
