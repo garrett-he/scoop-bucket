@@ -1,0 +1,35 @@
+{
+    "##": [
+        "The vendor's Chinese page links to www.stcmicro.com.cn/rar/stc-isp6.96z.rar, but that host now returns 404; the same path on stcmicro.com serves the RAR without the 301 from www.stcmicro.com.",
+        "The RAR holds one flat 32-bit GUI executable, STC-ISP-v6.96Z.exe. 7z also sees an embedded res*.bin resource archive inside the PE; that is the app's own data, not an installer, so no extraction hooks or runtime dependencies are needed.",
+        "The executable name embeds the version, so pre_install renames it to STC-ISP.exe before shims and shortcuts are created; this keeps them valid after an upgrade.",
+        "checkver is anchored to the v6.96 section of the vendor's download page and captures both the version and the lowercase filename token, which autoupdate uses to build the next RAR URL.",
+        "The vendor also publishes v6.97 builds on the same page; this manifest intentionally tracks the v6.96 series matching the requested download."
+    ],
+    "version": "6.96Z",
+    "description": "ISP programming and debugging tool for STC 8051 and 32-bit MCUs, also branded AiCube-ISP",
+    "homepage": "https://www.stcmicro.com.cn/",
+    "license": "Freeware",
+    "url": "https://stcmicro.com/rar/stc-isp6.96z.rar",
+    "hash": "3c0c5d4d664ff1186bddaca3addf5f51f4b04c18bd8c60d83ff8ef35e1d9c42c",
+    "pre_install": "Move-Item -Path \"$dir\\STC-ISP-v*.exe\" -Destination \"$dir\\STC-ISP.exe\" -Force",
+    "bin": [
+        [
+            "STC-ISP.exe",
+            "stc-isp"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "STC-ISP.exe",
+            "STC-ISP"
+        ]
+    ],
+    "checkver": {
+        "url": "https://stcmicro.com/rjxz.html",
+        "regex": "STC ISP Programming Software \\(v6\\.96 Series\\)[\\s\\S]*?\\(v(?<version>6\\.96[A-Z]+)\\)[\\s\\S]*?(?<filename>stc-isp6\\.96[a-z]+\\.rar)"
+    },
+    "autoupdate": {
+        "url": "https://stcmicro.com/rar/$matchFilename"
+    }
+}
